@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PROMOVAULT — Internal Voucher Manager</title>
+  <meta name="description" content="Aplikasi internal admin PromoHolic untuk menyimpan dan mengelola akun voucher Kopi Kenangan & Tomoro Coffee.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Mobile Viewport Container (iPhone 390-430px) -->
+  <div class="app-viewport">
+
+    <!-- ========================================== -->
+    <!-- 🔐 SCREEN 1: LOGIN PAGE (SEPARATE VIEW) -->
+    <!-- ========================================== -->
+    <div id="loginScreenView" class="screen-view login-screen-view">
+      <div class="login-card-box">
+        
+        <!-- Lock Icon (Max 80px Box) -->
+        <div class="lock-icon-box">
+          <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+
+        <!-- Branding -->
+        <h1 class="login-brand-title">PROMO<span>VAULT</span></h1>
+        <p class="login-brand-subtitle">Internal Voucher Manager</p>
+
+        <!-- Form -->
+        <form id="loginForm" class="login-form-container">
+          <div class="form-group-login">
+            <label for="loginCode">Kode Akses Admin</label>
+            <div class="input-password-wrapper">
+              <svg class="input-lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input type="password" id="loginCode" class="input-login-control" placeholder="Masukkan Kode Akses" required autocomplete="off">
+              <button type="button" id="toggleLoginPassword" class="btn-toggle-eye" aria-label="Toggle password visibility">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit-masuk">
+            Masuk
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </form>
+
+      </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- 📱 SCREEN 2: DASHBOARD TRACKER (SHOWN ON LOGIN) -->
+    <!-- ========================================== -->
+    <div id="dashboardScreenView" class="screen-view dashboard-view" style="display: none;">
+
+      <!-- Header Dashboard -->
+      <header class="app-header">
+        <div class="header-bar">
+          <!-- Left: Hamburger Menu Icon -->
+          <button type="button" id="hamburgerBtn" class="btn-menu-icon" aria-label="Menu">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+
+          <!-- Center: Logo PROMOHOLIC TRACKER -->
+          <div class="header-brand-center">
+            <div class="header-brand-title">PROMO<span>HOLIC</span></div>
+            <div class="header-brand-subtitle">TRACKER</div>
+          </div>
+
+          <!-- Right: Badge Green ONLINE -->
+          <div class="online-badge">
+            <span class="online-dot"></span>
+            ONLINE
+          </div>
+        </div>
+
+        <!-- Pill Tabs Bar -->
+        <nav class="tabs-pill-container" role="tablist">
+          <button class="tab-pill-btn active" data-tab="kopkenNormal" role="tab" aria-selected="true">
+            <span>☕</span> KopKen Akun
+          </button>
+          <button class="tab-pill-btn" data-tab="kopkenBaperan" role="tab" aria-selected="false">
+            <span>💔</span> KopKen Baperan
+          </button>
+          <button class="tab-pill-btn" data-tab="voucherKopken" role="tab" aria-selected="false">
+            <span>🎟</span> Voucher KopKen
+          </button>
+          <button class="tab-pill-btn" data-tab="tomoroCoffee" role="tab" aria-selected="false">
+            <span>🥤</span> Tomoro Coffee
+          </button>
+        </nav>
+      </header>
+
+      <!-- Search Bar -->
+      <div class="search-bar-wrapper">
+        <div class="search-input-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Cari nomor akun…" autocomplete="off">
+          <button id="searchClearBtn" class="search-clear-icon" aria-label="Clear">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <main class="app-main-content">
+
+        <!-- TAB 1: KOPKEN AKUN (NORMAL) -->
+        <section id="tab-kopkenNormal" class="tab-content-view">
+          <div class="section-title-bar">
+            <div>
+              <h2 class="section-title-text">KopKen Akun (Normal)</h2>
+              <p class="section-subtitle-text">1 device = maksimal 3 akun/nomor</p>
+            </div>
+            <!-- + Blok Baru removed per prompt spec! Device is created automatically -->
+          </div>
+
+          <div id="kopkenNormalDevicesList">
+            <!-- Dynamic Automatic Devices -->
+          </div>
+
+          <div class="info-note-card">
+            <span style="font-size: 14px;">ℹ</span>
+            <div>
+              Setiap akun KopKen (normal) berisi 3 voucher:<br>
+              <strong>Tanpa Min, Min 50K, Min 70K.</strong> Tap badge untuk tandai <strong>TERPAKAI</strong>.
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: KOPKEN BAPERAN -->
+        <section id="tab-kopkenBaperan" class="tab-content-view" style="display: none;">
+          <div class="section-title-bar">
+            <div>
+              <h2 class="section-title-text">💔 KopKen Baperan</h2>
+              <p class="section-subtitle-text">1 akun = 1 voucher (potongan 8K). Tap badge untuk tandai <strong>TERPAKAI</strong>.</p>
+            </div>
+          </div>
+
+          <div id="baperanList">
+            <!-- Dynamic Cards -->
+          </div>
+        </section>
+
+        <!-- TAB 3: VOUCHER KOPKEN OVERVIEW -->
+        <section id="tab-voucherKopken" class="tab-content-view" style="display: none;">
+          <div class="section-title-bar">
+            <div>
+              <h2 class="section-title-text">🎟 Voucher KopKen</h2>
+              <p class="section-subtitle-text">Stok voucher aktif (belum dipakai)</p>
+            </div>
+          </div>
+
+          <div class="voucher-cards-grid">
+            <div class="voucher-pastel-card bg-green">
+              <div class="voucher-card-head">Tanpa Min</div>
+              <div>
+                <div id="stockTanpaMin" class="voucher-card-big-num">0</div>
+                <div class="voucher-card-subtext">Voucher Aktif</div>
+              </div>
+            </div>
+
+            <div class="voucher-pastel-card bg-orange">
+              <div class="voucher-card-head">Min 50K</div>
+              <div>
+                <div id="stockMin50k" class="voucher-card-big-num">0</div>
+                <div class="voucher-card-subtext">Voucher Aktif</div>
+              </div>
+            </div>
+
+            <div class="voucher-pastel-card bg-blue">
+              <div class="voucher-card-head">Min 70K</div>
+              <div>
+                <div id="stockMin70k" class="voucher-card-big-num">0</div>
+                <div class="voucher-card-subtext">Voucher Aktif</div>
+              </div>
+            </div>
+
+            <div class="voucher-pastel-card bg-white">
+              <div class="voucher-card-head">Potongan</div>
+              <div>
+                <div id="stockPotongan8k" class="voucher-card-big-num">Rp8.000</div>
+                <div class="voucher-card-subtext">Voucher Baperan Aktif</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: TOMORO COFFEE -->
+        <section id="tab-tomoroCoffee" class="tab-content-view" style="display: none;">
+          <div class="section-title-bar">
+            <div>
+              <h2 class="section-title-text">🥤 Tomoro Coffee</h2>
+              <p class="section-subtitle-text">1 nomor = 2 voucher. Tap badge untuk tandai <strong>TERPAKAI</strong>.</p>
+            </div>
+          </div>
+
+          <div id="tomoroList">
+            <!-- Dynamic Cards -->
+          </div>
+        </section>
+
+      </main>
+
+      <!-- Floating Action Button (+), shown ONLY inside Dashboard -->
+      <button id="fabAddBtn" class="fab-btn-orange" aria-label="Tambah Akun">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+
+    </div>
+
+  </div> <!-- End App Viewport -->
+
+
+  <!-- ========================================== -->
+  <!-- MODALS & ACTION SHEETS -->
+  <!-- ========================================== -->
+
+  <!-- Action Sheet (Menu Titik Tiga) -->
+  <div id="actionSheetModal" class="modal-overlay">
+    <div class="action-sheet-modal">
+      <div class="action-sheet-drag"></div>
+      
+      <div id="actionSheetTargetInfo" style="text-align: center; font-size: 13px; font-weight: 700; color: var(--secondary-navy); margin-bottom: 14px;">
+        0856 1234 5678
+      </div>
+
+      <button type="button" id="asBtnCopyPhone" class="action-sheet-item">
+        <span>📋</span> Copy Nomor HP
+      </button>
+
+      <button type="button" id="asBtnCopyPin" class="action-sheet-item" style="display: none;">
+        <span>🔑</span> Copy PIN Akun
+      </button>
+
+      <button type="button" id="asBtnEdit" class="action-sheet-item">
+        <span>✏️</span> Edit Data Akun
+      </button>
+
+      <button type="button" id="asBtnDelete" class="action-sheet-item danger">
+        <span>🗑️</span> Hapus Akun
+      </button>
+    </div>
+  </div>
+
+  <!-- Hamburger Menu Modal -->
+  <div id="hamburgerModal" class="modal-overlay">
+    <div class="action-sheet-modal">
+      <div class="action-sheet-drag"></div>
+      <h3 style="font-size: 16px; font-weight: 700; color: var(--secondary-navy); margin-bottom: 14px;">Menu Admin PromoHolic</h3>
+
+      <button type="button" id="hbBtnBulkImport" class="action-sheet-item">
+        <span>📥</span> Bulk Import Akun (Banyak Nomor)
+      </button>
+
+      <button type="button" id="hbBtnChangeCode" class="action-sheet-item">
+        <span>🔑</span> Ganti Kode Akses Admin
+      </button>
+
+      <button type="button" id="hbBtnLogout" class="action-sheet-item danger">
+        <span>🚪</span> Keluar (Logout)
+      </button>
+    </div>
+  </div>
+
+  <!-- Bulk Import Modal -->
+  <div id="bulkImportModal" class="modal-overlay">
+    <div class="action-sheet-modal">
+      <div class="action-sheet-drag"></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <h3 id="bulkImportModalTitle" style="font-size: 16px; font-weight: 700;">Bulk Import Akun</h3>
+        <button type="button" class="close-modal-btn" style="background: none; border: none; font-size: 20px;">&times;</button>
+      </div>
+
+      <form id="bulkImportForm">
+        <div class="info-note-card" style="margin-top: 0; margin-bottom: 14px;">
+          <div>
+            <strong id="importFormatTitle">Format Input: 1 nomor per baris</strong>
+            <p id="importFormatExample" style="margin-top: 2px;">085612345678<br>082134567890</p>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <textarea id="bulkTextarea" class="form-control" rows="6" style="height: auto; padding: 12px; font-family: monospace; font-size: 13px;" placeholder="Paste nomor di sini..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary-orange">
+          Proses Import
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Import Summary Modal -->
+  <div id="importSummaryModal" class="modal-overlay">
+    <div class="action-sheet-modal">
+      <div class="action-sheet-drag"></div>
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--secondary-navy);">Ringkasan Import</h3>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+        <div style="background: #ECFDF5; padding: 12px; border-radius: 12px; color: #065F46; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
+          <span>✅ Berhasil Diimpor</span>
+          <span id="summarySuccessCount" style="font-size: 18px; font-weight: 800;">0</span>
+        </div>
+        <div style="background: #FFFBEB; padding: 12px; border-radius: 12px; color: #92400E; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
+          <span>⚠️ Duplikat Dilewati</span>
+          <span id="summaryDuplicateCount" style="font-size: 18px; font-weight: 800;">0</span>
+        </div>
+        <div style="background: #FEF2F2; padding: 12px; border-radius: 12px; color: #991B1B; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
+          <span>❌ Format Tidak Valid</span>
+          <span id="summaryInvalidCount" style="font-size: 18px; font-weight: 800;">0</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-primary-orange close-modal-btn">
+        Selesai
+      </button>
+    </div>
+  </div>
+
+  <!-- Add Modal -->
+  <div id="addModal" class="modal-overlay">
+    <div class="action-sheet-modal">
+      <div class="action-sheet-drag"></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <h3 id="addModalTitle" style="font-size: 16px; font-weight: 700;">Tambah Akun Baru</h3>
+        <button type="button" class="close-modal-btn" style="background: none; border: none; font-size: 20px;">&times;</button>
+      </div>
+
+      <form id="addForm">
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 12px; font-weight: 600; color: var(--secondary-navy); display: block; margin-bottom: 6px;">Nomor HP Akun</label>
+          <input type="tel" id="addPhoneNumber" class="form-control" placeholder="Contoh: 085612345678" required autocomplete="off">
+        </div>
+
+        <div id="addPinField" style="margin-bottom: 14px; display: none;">
+          <label style="font-size: 12px; font-weight: 600; color: var(--secondary-navy); display: block; margin-bottom: 6px;">PIN Akun</label>
+          <input type="text" id="addPinNumber" class="form-control" placeholder="Masukkan PIN" autocomplete="off">
+        </div>
+
+        <button type="submit" class="btn-primary-orange" style="margin-top: 10px;">
+          Simpan Akun
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal-overlay">
+    <div class="action-sheet-modal">
+      <div class="action-sheet-drag"></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <h3 style="font-size: 16px; font-weight: 700;">Edit Data Akun</h3>
+        <button type="button" class="close-modal-btn" style="background: none; border: none; font-size: 20px;">&times;</button>
+      </div>
+
+      <form id="editForm">
+        <input type="hidden" id="editAccountId">
+        <input type="hidden" id="editAccountType">
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 12px; font-weight: 600; color: var(--secondary-navy); display: block; margin-bottom: 6px;">Nomor HP Akun</label>
+          <input type="tel" id="editPhoneNumber" class="form-control" required autocomplete="off">
+        </div>
+
+        <div id="editPinGroup" style="margin-bottom: 14px; display: none;">
+          <label style="font-size: 12px; font-weight: 600; color: var(--secondary-navy); display: block; margin-bottom: 6px;">PIN Akun</label>
+          <input type="text" id="editPinNumber" class="form-control" autocomplete="off">
+        </div>
+
+        <button type="submit" class="btn-primary-orange" style="margin-top: 10px;">
+          Update Data
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Code Modal -->
+  <div id="changeCodeModal" class="modal-overlay">
+    <div class="action-sheet-modal">
+      <div class="action-sheet-drag"></div>
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--secondary-navy);">Ganti Kode Akses Admin</h3>
+
+      <form id="changeAccessCodeForm">
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Kode Akses Lama</label>
+          <input type="password" id="oldAccessCode" class="form-control" required>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Kode Akses Baru</label>
+          <input type="password" id="newAccessCode" class="form-control" required>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Konfirmasi Kode Baru</label>
+          <input type="password" id="confirmAccessCode" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn-primary-orange">
+          Simpan Kode Akses Baru
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
