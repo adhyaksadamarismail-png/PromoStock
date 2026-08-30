@@ -1,18 +1,16 @@
 /* ==========================================================================
-   PROMOHOLIC TRACKER / PROMOVAULT - SINGLE LINE CLEAN LAYOUT (NON-BOLD)
-   Mobile-First (iPhone 390-430px) • Colors: White, Orange #FF7A00, Navy #12284C
+   PROMOHOLIC TRACKER / PROMOVAULT - OPSI B (BRIGHT BADGE / CLEAN IPHONE STYLE)
+   Colors: Background #FFFFFF, Navy #12284C, Orange #FF7A00, Border #ECECEC
+   Badge Colors: Hijau #16A34A, Orange #F97316, Ungu #7C3AED, Merah #EF4444
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --primary-orange: #FF7A00;
   --primary-orange-hover: #E66E00;
-  --primary-orange-light: #FFF3E0;
-  --secondary-navy: #12284C;
-  --secondary-navy-light: #F1F5F9;
-  
-  --bg-app: #FAFAFC;
+  --primary-navy: #12284C;
+  --bg-app: #FFFFFF;
   --bg-card: #FFFFFF;
   --bg-subtle: #F8FAFC;
   
@@ -20,14 +18,20 @@
   --text-muted: #64748B;
   --text-light: #94A3B8;
   
-  --border-card: #F1F5F9;
+  --border-card: #ECECEC;
   --border-dashed: #CBD5E1;
+  
+  --badge-green: #16A34A;
+  --badge-orange: #F97316;
+  --badge-purple: #7C3AED;
+  --badge-red: #EF4444;
+  --badge-red-bg: #FEF2F2;
   
   --shadow-sm: 0 1px 4px rgba(18, 40, 76, 0.03);
   --shadow-card: 0 2px 10px rgba(18, 40, 76, 0.04);
   --shadow-sheet: 0 -8px 24px rgba(18, 40, 76, 0.12);
   
-  --radius-card: 16px;
+  --radius-card: 20px;
   --radius-pill: 999px;
   --radius-btn: 10px;
   
@@ -126,7 +130,7 @@ body {
 
 .login-brand-title {
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--secondary-navy);
   letter-spacing: -0.3px;
   line-height: 1.1;
@@ -191,9 +195,7 @@ body {
   outline: none;
 }
 
-.input-login-control:focus {
-  border-color: var(--primary-orange);
-}
+.input-login-control:focus { border-color: var(--primary-orange); }
 
 .btn-toggle-eye {
   position: absolute;
@@ -214,7 +216,7 @@ body {
   color: #FFFFFF;
   font-family: inherit;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -230,7 +232,7 @@ body {
 /* ==========================================================================
    📱 DASHBOARD HEADER & SHELL
    ========================================================================== */
-.dashboard-view { background: var(--bg-app); }
+.dashboard-view { background: #FFFFFF; }
 
 .app-header {
   background: #FFFFFF;
@@ -238,7 +240,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid #ECECEC;
 }
 
 .header-bar {
@@ -262,8 +264,8 @@ body {
 .header-brand-center { text-align: center; }
 
 .header-brand-title {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 800;
   letter-spacing: -0.3px;
   color: var(--secondary-navy);
   line-height: 1;
@@ -272,8 +274,8 @@ body {
 .header-brand-title span { color: var(--primary-orange); }
 
 .header-brand-subtitle {
-  font-size: 8px;
-  font-weight: 500;
+  font-size: 8.5px;
+  font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -285,17 +287,17 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 9.5px;
-  font-weight: 500;
-  color: #10B981;
-  background: #ECFDF5;
-  padding: 2px 7px;
+  font-weight: 700;
+  color: #16A34A;
+  background: #DCFCE7;
+  padding: 2px 8px;
   border-radius: var(--radius-pill);
 }
 
 .online-dot {
   width: 5px;
   height: 5px;
-  background-color: #10B981;
+  background-color: #16A34A;
   border-radius: 50%;
 }
 
@@ -314,8 +316,8 @@ body {
   white-space: nowrap;
   padding: 6px 12px;
   font-family: inherit;
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 11.5px;
+  font-weight: 600;
   color: var(--text-muted);
   background: #F1F5F9;
   border: none;
@@ -353,19 +355,19 @@ body {
 
 .search-input-pill input {
   width: 100%;
-  height: 36px;
+  height: 38px;
   padding: 0 30px 0 34px;
   font-family: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 400;
   color: var(--secondary-navy);
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
+  background: #FFFFFF;
+  border: 1px solid #ECECEC;
   border-radius: var(--radius-pill);
   outline: none;
 }
 
-.search-input-pill input:focus { border-color: var(--primary-orange); background: #FFFFFF; }
+.search-input-pill input:focus { border-color: var(--primary-orange); }
 .search-input-pill input::placeholder { color: var(--text-light); }
 
 .search-clear-icon {
@@ -381,7 +383,7 @@ body {
 
 /* Main Content Area */
 .app-main-content {
-  padding: 10px 12px 90px;
+  padding: 10px 14px 110px;
   flex: 1;
 }
 
@@ -394,24 +396,26 @@ body {
 }
 
 .section-title-text {
-  font-size: 13.5px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--secondary-navy);
 }
 
 .section-subtitle-text {
-  font-size: 10.5px;
-  font-weight: 400;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--text-muted);
 }
 
-/* Device Card Container */
+/* ==========================================================================
+   OPSI B - DEVICE CARD CONTAINER
+   ========================================================================== */
 .block-card-container {
-  background: var(--bg-card);
-  border-radius: 16px;
+  background: #FFFFFF;
+  border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
   border: 1px solid var(--border-card);
 }
 
@@ -419,7 +423,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .block-title-group {
@@ -430,16 +434,17 @@ body {
 
 .badge-block-tag {
   background: #FFF3E0;
-  color: #E65100;
-  font-size: 10px;
-  font-weight: 500;
-  padding: 2px 8px;
+  color: #F97316;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 9px;
   border-radius: 6px;
+  letter-spacing: 0.3px;
 }
 
 .block-account-count {
-  font-size: 11px;
-  font-weight: 400;
+  font-size: 11.5px;
+  font-weight: 500;
   color: var(--text-muted);
 }
 
@@ -450,30 +455,30 @@ body {
 }
 
 .badge-status-full {
-  background: #E8F5E9;
-  color: #2E7D32;
-  font-size: 9.5px;
-  font-weight: 500;
-  padding: 1.5px 7px;
-  border-radius: 4px;
+  background: #DCFCE7;
+  color: #16A34A;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
 }
 
 /* ==========================================================================
-   ACCOUNT ITEM ROW (KOPKEN NORMAL / TOMORO)
+   OPSI B - ACCOUNT ITEM ROW (BRIGHT OUTLINE BADGES • 16px BOLD PHONE)
    ========================================================================== */
 .account-item-row {
   background: #FFFFFF;
-  border-radius: 10px;
-  height: 40px;
-  min-height: 40px;
+  border-radius: 12px;
+  height: 48px;
+  min-height: 48px;
   padding: 0 8px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border: 1px solid #F1F5F9;
   white-space: nowrap;
-  gap: 4px;
+  gap: 6px;
   width: 100%;
 }
 
@@ -482,28 +487,46 @@ body {
 .account-item-left {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Status Indicator Dots */
+.status-dot-green {
+  width: 8px;
+  height: 8px;
+  background-color: #16A34A;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot-red {
+  width: 8px;
+  height: 8px;
+  background-color: #EF4444;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 
 .account-index-num {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   background: #F1F5F9;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 9.5px;
-  font-weight: 500;
+  font-size: 10.5px;
+  font-weight: 700;
   color: var(--text-muted);
   flex-shrink: 0;
 }
 
+/* Phone Number: 16px BOLD (700) per spec */
 .account-phone-text {
   font-family: 'Poppins', sans-serif;
-  font-size: 12.5px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--secondary-navy);
   letter-spacing: 0.2px;
   white-space: nowrap;
@@ -514,13 +537,13 @@ body {
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 2px;
+  padding: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 4px;
   flex-shrink: 0;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .btn-inline-copy:active { color: var(--primary-orange); }
@@ -528,41 +551,56 @@ body {
 .account-item-center {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
-.badge-pastel {
-  height: 20px;
-  padding: 0 6px;
-  border-radius: 6px;
-  font-size: 9.5px;
-  font-weight: 400;
+/* OPSI B - OUTLINE BADGE STYLING */
+.badge-outline {
+  height: 26px;
+  padding: 0 9px;
+  border-radius: 10px;
+  font-size: 10.5px;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
+  background: #FFFFFF;
+  border: 1.5px solid transparent;
   transition: var(--transition-smooth);
 }
 
-.badge-pastel:active { transform: scale(0.95); }
+.badge-outline:active { transform: scale(0.95); }
 
-/* Pastel Colors */
-.badge-pastel.green { background: #E8F5E9; color: #2E7D32; }
-.badge-pastel.orange { background: #FFF3E0; color: #E65100; }
-.badge-pastel.purple { background: #EDE7F6; color: #512DA8; }
-.badge-pastel.pink { background: #FCE4EC; color: #C2185B; }
-.badge-pastel.red { background: #FFEBEE; color: #D32F2F; }
-.badge-pastel.navy { background: #E8EAF6; color: #12284C; }
+/* Active Outline Colors */
+.badge-outline.green {
+  border-color: #16A34A;
+  color: #16A34A;
+  background: #FFFFFF;
+}
 
-/* TERPAKAI Faded State */
-.badge-pastel.used {
-  background: #FFEBEE !important;
-  color: #D32F2F !important;
-  opacity: 0.75;
-  font-weight: 400;
+.badge-outline.orange {
+  border-color: #F97316;
+  color: #F97316;
+  background: #FFFFFF;
+}
+
+.badge-outline.purple {
+  border-color: #7C3AED;
+  color: #7C3AED;
+  background: #FFFFFF;
+}
+
+/* Used State (Faint Red Bg, Solid Red Border & Text) */
+.badge-outline.used {
+  border-color: #EF4444 !important;
+  color: #EF4444 !important;
+  background: #FEF2F2 !important;
+  font-weight: 700;
 }
 
 .account-item-right {
@@ -575,8 +613,8 @@ body {
   background: none;
   border: none;
   color: var(--secondary-navy);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 700;
   padding: 2px 4px;
   cursor: pointer;
   border-radius: 4px;
@@ -585,147 +623,19 @@ body {
   justify-content: center;
 }
 
-/* ==========================================================================
-   💔 KOPKEN BAPERAN SPECIFIC ROW (EXACT MOCKUP MATCH)
-   ========================================================================== */
-.baperan-account-row {
-  background: #FFFFFF;
-  border-radius: 12px;
-  min-height: 56px;
-  height: 56px;
-  padding: 0 10px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid #F1F5F9;
-  gap: 8px;
-}
-
-.baperan-account-row:last-child { margin-bottom: 0; }
-
-.baperan-left-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
-
-.baperan-index-num {
-  width: 24px;
-  height: 24px;
-  background: #F1F5F9;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--secondary-navy);
-  flex-shrink: 0;
-}
-
-.baperan-info-box {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-}
-
-.baperan-phone-text {
-  font-family: 'Poppins', sans-serif;
-  font-size: 14.5px;
-  font-weight: 700;
-  color: var(--secondary-navy);
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-  line-height: 1.2;
-}
-
-.baperan-pin-text {
-  font-size: 11px;
-  font-weight: 500;
-  color: #64748B;
-  margin-top: 1px;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  white-space: nowrap;
-}
-
-.btn-baperan-copy {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: var(--transition-smooth);
-}
-
-.btn-baperan-copy:active {
-  color: var(--primary-orange);
-  background: var(--primary-orange-light);
-}
-
-.baperan-right-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-/* Badge Baperan (1 Voucher / TERPAKAI) */
-.badge-baperan-voucher {
-  height: 28px;
-  padding: 0 12px;
-  border-radius: var(--radius-pill);
-  font-size: 11.5px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  white-space: nowrap;
-  cursor: pointer;
-  user-select: none;
-  transition: var(--transition-smooth);
-}
-
-.badge-baperan-voucher.active {
-  background: #E8F5E9;
-  color: #2E7D32;
-  border: 1px solid #CEEAD6;
-}
-
-.badge-baperan-voucher.used {
-  background: #FCE8E6;
-  color: #C5221F;
-  border: 1px solid #FAD2CF;
-}
-
-.badge-baperan-voucher:active {
-  transform: scale(0.94);
-}
-
 /* Slot Kosong Row */
 .slot-kosong-row {
-  border: 1px dashed #CBD5E1;
+  border: 1.5px dashed #CBD5E1;
   background: #FFFFFF;
-  border-radius: 10px;
-  height: 38px;
-  padding: 0 10px;
+  border-radius: 12px;
+  height: 44px;
+  padding: 0 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   color: var(--text-light);
-  font-size: 11.5px;
-  font-weight: 400;
+  font-size: 12px;
+  font-weight: 500;
   margin-bottom: 6px;
 }
 
@@ -739,30 +649,30 @@ body {
 
 .slot-kosong-text {
   color: var(--text-muted);
-  font-size: 11.5px;
-  font-weight: 400;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .slot-kosong-icon {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
 }
 
 /* Info Note Card */
 .info-note-card {
   background: #EFF6FF;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 10px 12px;
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  margin-top: 8px;
-  font-size: 10.5px;
+  margin-top: 10px;
+  font-size: 11px;
   color: #1E40AF;
   line-height: 1.35;
 }
 
-.info-note-card strong { font-weight: 500; }
+.info-note-card strong { font-weight: 700; }
 
 /* Voucher 4 Cards Grid */
 .voucher-cards-grid {
@@ -773,68 +683,108 @@ body {
 }
 
 .voucher-pastel-card {
-  border-radius: 14px;
-  padding: 12px;
+  border-radius: 16px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 90px;
-  border: 1px solid rgba(18, 40, 76, 0.04);
+  min-height: 95px;
+  border: 1px solid #ECECEC;
 }
 
 .voucher-pastel-card.bg-green { background: #ECFDF5; }
 .voucher-pastel-card.bg-orange { background: #FFF7ED; }
 .voucher-pastel-card.bg-purple { background: #EDE7F6; }
-.voucher-pastel-card.bg-white { background: #FFFFFF; border: 1px solid #E2E8F0; }
+.voucher-pastel-card.bg-white { background: #FFFFFF; }
 
-.voucher-card-head { font-size: 10.5px; font-weight: 500; }
-.voucher-pastel-card.bg-green .voucher-card-head { color: #047857; }
-.voucher-pastel-card.bg-orange .voucher-card-head { color: #C2410C; }
-.voucher-pastel-card.bg-purple .voucher-card-head { color: #512DA8; }
+.voucher-card-head { font-size: 11px; font-weight: 700; }
+.voucher-pastel-card.bg-green .voucher-card-head { color: #16A34A; }
+.voucher-pastel-card.bg-orange .voucher-card-head { color: #F97316; }
+.voucher-pastel-card.bg-purple .voucher-card-head { color: #7C3AED; }
 .voucher-pastel-card.bg-white .voucher-card-head { color: var(--text-muted); }
 
 .voucher-card-big-num {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 800;
   line-height: 1;
   margin: 4px 0 2px;
 }
 
-.voucher-pastel-card.bg-green .voucher-card-big-num { color: #065F46; }
-.voucher-pastel-card.bg-orange .voucher-card-big-num { color: #9A3412; }
-.voucher-pastel-card.bg-purple .voucher-card-big-num { color: #512DA8; }
-.voucher-pastel-card.bg-white .voucher-card-big-num { color: var(--primary-orange); font-size: 18px; }
+.voucher-pastel-card.bg-green .voucher-card-big-num { color: #15803D; }
+.voucher-pastel-card.bg-orange .voucher-card-big-num { color: #C2410C; }
+.voucher-pastel-card.bg-purple .voucher-card-big-num { color: #6B21A8; }
+.voucher-pastel-card.bg-white .voucher-card-big-num { color: var(--primary-orange); font-size: 20px; }
 
-.voucher-card-subtext { font-size: 10px; color: var(--text-muted); font-weight: 400; }
+.voucher-card-subtext { font-size: 10.5px; color: var(--text-muted); font-weight: 500; }
 
 /* Floating Action Button (FAB) */
 .fab-btn-orange {
   position: fixed;
-  bottom: 20px;
-  right: calc(50% - 190px + 14px);
-  width: 48px;
-  height: 48px;
+  bottom: 76px;
+  right: calc(50% - 190px + 16px);
+  width: 52px;
+  height: 52px;
   background: linear-gradient(135deg, var(--primary-orange) 0%, #E66E00 100%);
   color: #FFFFFF;
   border-radius: var(--radius-pill);
   border: none;
-  box-shadow: 0 6px 18px rgba(255, 122, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(255, 122, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 40;
+  z-index: 90;
   transition: var(--transition-smooth);
 }
 
 @media (max-width: 480px) {
   .fab-btn-orange {
-    right: 16px;
-    bottom: 16px;
+    right: 18px;
+    bottom: 76px;
   }
 }
 
-.fab-btn-orange:active { transform: scale(0.9); }
+.fab-btn-orange:active { transform: scale(0.92); }
+
+/* Bottom Navigation Bar (Opsi B Spec) */
+.bottom-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  height: 60px;
+  background: #FFFFFF;
+  border-top: 1px solid #ECECEC;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 100;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: #64748B;
+  font-family: inherit;
+  font-size: 9.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: var(--transition-smooth);
+}
+
+.bottom-nav-item.active {
+  color: var(--primary-orange);
+  font-weight: 700;
+}
+
+.bottom-nav-icon { font-size: 17px; }
 
 /* Modals & Action Sheet */
 .modal-overlay {
@@ -867,9 +817,7 @@ body {
   transition: var(--transition-smooth);
 }
 
-.modal-overlay.active .action-sheet-modal {
-  transform: translateY(0);
-}
+.modal-overlay.active .action-sheet-modal { transform: translateY(0); }
 
 .action-sheet-drag {
   width: 32px;
@@ -884,7 +832,7 @@ body {
   padding: 12px 14px;
   font-family: inherit;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--secondary-navy);
   background: #F8FAFC;
   border: 1px solid #F1F5F9;
@@ -913,15 +861,12 @@ body {
   font-weight: 400;
   color: var(--secondary-navy);
   background: #F8FAFC;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #ECECEC;
   border-radius: 10px;
   outline: none;
 }
 
-.form-control:focus {
-  border-color: var(--primary-orange);
-  background: #FFFFFF;
-}
+.form-control:focus { border-color: var(--primary-orange); background: #FFFFFF; }
 
 .btn-primary-orange {
   width: 100%;
@@ -930,7 +875,7 @@ body {
   color: #FFFFFF;
   font-family: inherit;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -965,7 +910,7 @@ body {
   padding: 10px 14px;
   border-radius: 12px;
   font-size: 12px;
-  font-weight: 400;
+  font-weight: 500;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
@@ -976,7 +921,7 @@ body {
 }
 
 .toast.toast-error { background: #7F1D1D; border-left-color: #EF4444; }
-.toast.toast-success { background: #064E3B; border-left-color: #10B981; }
+.toast.toast-success { background: #064E3B; border-left-color: #16A34A; }
 
 @keyframes toastIn {
   from { opacity: 0; transform: translateY(-16px) scale(0.92); }

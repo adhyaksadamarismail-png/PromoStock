@@ -1,6 +1,6 @@
 /**
  * PROMOHOLIC TRACKER / PROMOVAULT - Application Controller
- * Single-Line Horizontal Layout with Non-Bold Typography & Exact KopKen Baperan Mockup.
+ * OPSI B (Bright Badge / Clean iPhone Style) Implementation.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const hbBtnLogout = document.getElementById('hbBtnLogout');
 
   const tabBtns = document.querySelectorAll('.tab-pill-btn');
+  const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
   const tabContents = document.querySelectorAll('.tab-content-view');
   const searchInput = document.getElementById('searchInput');
   const searchClearBtn = document.getElementById('searchClearBtn');
@@ -76,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtns = document.querySelectorAll('.close-modal-btn');
   const toastContainer = document.getElementById('toastContainer');
 
-  // Helper Phone Formatter: 0856 1234 5678
+  // Helper Phone Formatter: 8132 883 0740 or 0856 1234 5678
   function formatPhoneDisplay(phone) {
     if (!phone) return '';
     const clean = phone.replace(/\D/g, '');
@@ -210,32 +211,49 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Kode akses berhasil diperbarui!', 'success');
   });
 
-  // --- Pill Tabs Switcher ---
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabBtns.forEach(b => {
+  // --- Synchronized Tab Navigation (Top Pills + Bottom Navigation) ---
+  function switchTab(targetTab) {
+    activeTab = targetTab;
+
+    tabBtns.forEach(b => {
+      if (b.dataset.tab === activeTab) {
+        b.classList.add('active');
+        b.setAttribute('aria-selected', 'true');
+      } else {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
-      });
-      tabContents.forEach(c => c.style.display = 'none');
-
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      activeTab = btn.dataset.tab;
-
-      const targetContent = document.getElementById(`tab-${activeTab}`);
-      if (targetContent) {
-        targetContent.style.display = 'block';
       }
-
-      if (activeTab === 'voucherKopken') {
-        fabAddBtn.style.display = 'none';
-      } else {
-        fabAddBtn.style.display = 'flex';
-      }
-
-      renderActiveTab();
     });
+
+    bottomNavItems.forEach(b => {
+      if (b.dataset.tab === activeTab) {
+        b.classList.add('active');
+      } else {
+        b.classList.remove('active');
+      }
+    });
+
+    tabContents.forEach(c => c.style.display = 'none');
+    const targetContent = document.getElementById(`tab-${activeTab}`);
+    if (targetContent) {
+      targetContent.style.display = 'block';
+    }
+
+    if (activeTab === 'voucherKopken') {
+      fabAddBtn.style.display = 'none';
+    } else {
+      fabAddBtn.style.display = 'flex';
+    }
+
+    renderActiveTab();
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  bottomNavItems.forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
 
   // --- Search Handler ---
@@ -319,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- Single Add Data Modal Handling (Auto Device assignment) ---
+  // --- Single Add Data Modal Handling ---
   fabAddBtn.addEventListener('click', () => {
     openAddModal();
   });
@@ -536,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ==========================================================================
-  // VIEW RENDERING LOGIC (SINGLE-LINE HORIZONTAL & EXACT BAPERAN MOCKUP)
+  // VIEW RENDERING LOGIC (OPSI B BRIGHT BADGE / CLEAN IPHONE STYLE)
   // ==========================================================================
 
   function renderAllViews() {
@@ -553,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (activeTab === 'tomoroCoffee') renderTomoroCoffee();
   }
 
-  // --- Render 1: KopKen Akun (Normal) ---
+  // --- Render 1: KopKen Akun (Normal) - OPSI B SPEC ---
   function renderKopKenNormal() {
     const container = document.getElementById('kopkenNormalDevicesList');
     const devices = window.storage.getKopKenDevices();
@@ -592,10 +610,12 @@ document.addEventListener('DOMContentLoaded', () => {
       filteredAccounts.forEach((acc, idx) => {
         const displayNum = formatPhoneDisplay(acc.number);
         const v = acc.vouchers || { tanpaMin: false, min50k: false, min70k: false };
+        const isAnyUsed = v.tanpaMin || v.min50k || v.min70k;
 
         accountsHtml += `
           <div class="account-item-row">
             <div class="account-item-left">
+              <span class="${isAnyUsed ? 'status-dot-red' : 'status-dot-green'}" title="${isAnyUsed ? 'Minimal 1 voucher terpakai' : 'Semua voucher masih aktif'}"></span>
               <span class="account-index-num">${idx + 1}</span>
               <span class="account-phone-text">${displayNum}</span>
               <button type="button" class="btn-inline-copy" onclick="window.copyPhone('${acc.number}')" title="Copy Nomor">
@@ -604,16 +624,16 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="account-item-center">
-              <span class="badge-pastel green ${v.tanpaMin ? 'used' : ''}" onclick="window.toggleKopkenVoucherBadge('${acc.id}', 'tanpaMin', event)" title="Tap status">
-                ${v.tanpaMin ? '✕ TERPAKAI' : 'Tanpa Min'}
+              <span class="badge-outline green ${v.tanpaMin ? 'used' : ''}" onclick="window.toggleKopkenVoucherBadge('${acc.id}', 'tanpaMin', event)" title="Tap status">
+                ${v.tanpaMin ? '✓ TERPAKAI' : 'Tanpa Min'}
               </span>
 
-              <span class="badge-pastel orange ${v.min50k ? 'used' : ''}" onclick="window.toggleKopkenVoucherBadge('${acc.id}', 'min50k', event)" title="Tap status">
-                ${v.min50k ? '✕ TERPAKAI' : 'Min 50K'}
+              <span class="badge-outline orange ${v.min50k ? 'used' : ''}" onclick="window.toggleKopkenVoucherBadge('${acc.id}', 'min50k', event)" title="Tap status">
+                ${v.min50k ? '✓ TERPAKAI' : 'Min 50K'}
               </span>
 
-              <span class="badge-pastel purple ${v.min70k ? 'used' : ''}" onclick="window.toggleKopkenVoucherBadge('${acc.id}', 'min70k', event)" title="Tap status">
-                ${v.min70k ? '✕ TERPAKAI' : 'Min 70K'}
+              <span class="badge-outline purple ${v.min70k ? 'used' : ''}" onclick="window.toggleKopkenVoucherBadge('${acc.id}', 'min70k', event)" title="Tap status">
+                ${v.min70k ? '✓ TERPAKAI' : 'Min 70K'}
               </span>
             </div>
 
@@ -653,6 +673,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <div class="block-status-right">
             ${isFull ? `<span class="badge-status-full">FULL</span>` : ''}
+            <button type="button" class="btn-collapse-toggle" onclick="window.deleteDevice('${dev.id}', '${dev.name}')" title="Hapus Device" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
           </div>
         </div>
         
@@ -674,7 +697,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- Render 2: KopKen Baperan (EXACT MOCKUP MATCH) ---
+  // --- Render 2: KopKen Baperan ---
   function renderKopKenBaperan() {
     const container = document.getElementById('baperanList');
     let accounts = window.storage.getBaperanAccounts();
@@ -725,7 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="baperan-right-group">
             <span class="badge-baperan-voucher ${isUsed ? 'used' : 'active'}" onclick="window.toggleBaperanVoucherBadge('${acc.id}', event)" title="Tap status">
               ${isUsed 
-                ? 'TERPAKAI <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>' 
+                ? '✓ TERPAKAI' 
                 : '1 Voucher'
               }
             </span>
@@ -779,10 +802,12 @@ document.addEventListener('DOMContentLoaded', () => {
     accounts.forEach((acc, idx) => {
       const displayNum = formatPhoneDisplay(acc.number);
       const v = acc.vouchers || { b1g1: false, v50: false };
+      const isAnyUsed = v.b1g1 || v.v50;
 
       accountsHtml += `
         <div class="account-item-row">
           <div class="account-item-left">
+            <span class="${isAnyUsed ? 'status-dot-red' : 'status-dot-green'}"></span>
             <span class="account-index-num">${idx + 1}</span>
             <span class="account-phone-text">${displayNum}</span>
             <button type="button" class="btn-inline-copy" onclick="window.copyPhone('${acc.number}')" title="Copy Nomor">
@@ -791,12 +816,12 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div class="account-item-center">
-            <span class="badge-pastel orange ${v.b1g1 ? 'used' : ''}" onclick="window.toggleTomoroVoucherBadge('${acc.id}', 'b1g1', event)" title="Tap status">
-              ${v.b1g1 ? '✕ TERPAKAI' : '🧡 B1G1'}
+            <span class="badge-outline orange ${v.b1g1 ? 'used' : ''}" onclick="window.toggleTomoroVoucherBadge('${acc.id}', 'b1g1', event)" title="Tap status">
+              ${v.b1g1 ? '✓ TERPAKAI' : '🧡 B1G1'}
             </span>
 
-            <span class="badge-pastel navy ${v.v50 ? 'used' : ''}" onclick="window.toggleTomoroVoucherBadge('${acc.id}', 'v50', event)" title="Tap status">
-              ${v.v50 ? '✕ TERPAKAI' : '💙 Voucher 50%'}
+            <span class="badge-outline purple ${v.v50 ? 'used' : ''}" onclick="window.toggleTomoroVoucherBadge('${acc.id}', 'v50', event)" title="Tap status">
+              ${v.v50 ? '✓ TERPAKAI' : '💙 Voucher 50%'}
             </span>
           </div>
 
@@ -820,6 +845,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.copyPin = function(pin) {
     copyToClipboard(pin, 'PIN');
+  };
+
+  window.deleteDevice = function(deviceId, deviceName) {
+    if (confirm(`Yakin hapus ${deviceName} beserta semua akun didalamnya?`)) {
+      window.storage.deleteKopKenDevice(deviceId);
+      showToast(`${deviceName} berhasil dihapus.`, 'success');
+      renderAllViews();
+    }
   };
 
   // Run Auth check on start
