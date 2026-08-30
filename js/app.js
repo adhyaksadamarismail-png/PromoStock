@@ -721,32 +721,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const cardContainer = document.createElement('div');
     cardContainer.className = 'block-card-container';
+    cardContainer.style.padding = '0';
 
     let accountsHtml = '';
 
     accounts.forEach((acc, idx) => {
       const displayNum = formatPhoneDisplay(acc.number);
       const isUsed = acc.used || false;
+      const pinDisplay = acc.pin ? acc.pin : '------';
 
       accountsHtml += `
-        <div class="account-item-row">
-          <div class="account-item-left">
-            <span class="${isUsed ? 'status-dot-red' : 'status-dot-green'}" title="${isUsed ? 'Voucher Terpakai' : 'Voucher Aktif'}"></span>
-            <span class="account-index-num">${idx + 1}</span>
-            <span class="account-phone-text">${displayNum}</span>
-            <button type="button" class="btn-inline-copy" onclick="window.copyPhone('${acc.number}')" title="Copy Nomor">
-              📋
+        <div class="baperan-account-row">
+          <div class="baperan-left-group">
+            <span class="baperan-index-num">${idx + 1}</span>
+            <div class="baperan-info-box">
+              <span class="baperan-phone-text">${displayNum}</span>
+              <span class="baperan-pin-text" onclick="window.copyPin('${acc.pin || ''}', event)" title="Tap untuk Copy PIN">🔑 PIN : ${pinDisplay}</span>
+            </div>
+          </div>
+
+          <div class="baperan-right-group">
+            <button type="button" class="btn-baperan-copy" onclick="window.copyPhone('${acc.number}')" title="Copy Nomor">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
             </button>
-            ${acc.pin ? `<span style="font-size: 10px; font-weight: 600; color: var(--text-muted); background: #F1F5F9; padding: 1px 5px; border-radius: 4px; margin-left: 2px;" title="PIN: ${acc.pin}">🔑 ${acc.pin}</span>` : ''}
-          </div>
-
-          <div class="account-item-center">
-            <span class="badge-outline pink ${isUsed ? 'used' : ''}" onclick="window.toggleBaperanVoucherBadge('${acc.id}', event)" title="Tap status">
-              ${isUsed ? '✓ TERPAKAI' : '1 Voucher'}
+            <span class="badge-baperan-voucher ${isUsed ? 'used' : 'active'}" onclick="window.toggleBaperanVoucherBadge('${acc.id}', event)" title="Tap status">
+              ${isUsed 
+                ? 'TERPAKAI <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' 
+                : '1 Voucher'
+              }
             </span>
-          </div>
-
-          <div class="account-item-right">
             <button type="button" class="btn-dots-menu" onclick="window.openActionSheet('${acc.id}', 'kopkenBaperan', '${acc.number}', '${acc.pin || ''}')" title="Opsi">
               ⋮
             </button>
@@ -838,7 +844,9 @@ document.addEventListener('DOMContentLoaded', () => {
     copyToClipboard(number, 'Nomor');
   };
 
-  window.copyPin = function(pin) {
+  window.copyPin = function(pin, event) {
+    if (event) event.stopPropagation();
+    if (!pin || pin === '------') return;
     copyToClipboard(pin, 'PIN');
   };
 
