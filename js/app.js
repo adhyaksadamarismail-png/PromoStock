@@ -1,6 +1,6 @@
 /**
  * PROMOHOLIC TRACKER / PROMOVAULT - Application Controller
- * Single-Line Horizontal Layout with Non-Bold Typography.
+ * Single-Line Horizontal Layout with Non-Bold Typography & Exact KopKen Baperan Mockup.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -86,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return `${clean.slice(0, 4)} ${clean.slice(4, 7)} ${clean.slice(7)}`;
     } else if (clean.length === 13) {
       return `${clean.slice(0, 4)} ${clean.slice(4, 8)} ${clean.slice(8)}`;
+    } else if (clean.length === 10) {
+      return `${clean.slice(0, 4)} ${clean.slice(4, 7)} ${clean.slice(7)}`;
     }
     return phone;
   }
@@ -534,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ==========================================================================
-  // VIEW RENDERING LOGIC (SINGLE-LINE HORIZONTAL • NON-BOLD)
+  // VIEW RENDERING LOGIC (SINGLE-LINE HORIZONTAL & EXACT BAPERAN MOCKUP)
   // ==========================================================================
 
   function renderAllViews() {
@@ -672,13 +674,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- Render 2: KopKen Baperan ---
+  // --- Render 2: KopKen Baperan (EXACT MOCKUP MATCH) ---
   function renderKopKenBaperan() {
     const container = document.getElementById('baperanList');
     let accounts = window.storage.getBaperanAccounts();
 
     if (searchQuery) {
-      accounts = accounts.filter(a => a.number.toLowerCase().includes(searchQuery));
+      accounts = accounts.filter(a => a.number.toLowerCase().includes(searchQuery) || (a.pin && a.pin.toLowerCase().includes(searchQuery)));
     }
 
     container.innerHTML = '';
@@ -702,25 +704,31 @@ document.addEventListener('DOMContentLoaded', () => {
     accounts.forEach((acc, idx) => {
       const displayNum = formatPhoneDisplay(acc.number);
       const isUsed = acc.used || false;
+      const pinDisplay = acc.pin ? acc.pin : '------';
 
       accountsHtml += `
-        <div class="account-item-row">
-          <div class="account-item-left">
-            <span class="account-index-num">${idx + 1}</span>
-            <span class="account-phone-text">${displayNum}</span>
-            <button type="button" class="btn-inline-copy" onclick="window.copyPhone('${acc.number}')" title="Copy Nomor">
-              📋
+        <div class="baperan-account-row">
+          <div class="baperan-left-group">
+            <span class="baperan-index-num">${idx + 1}</span>
+            <div class="baperan-info-box">
+              <span class="baperan-phone-text">${displayNum}</span>
+              <span class="baperan-pin-text">🔑 PIN : ${pinDisplay}</span>
+            </div>
+            <button type="button" class="btn-baperan-copy" onclick="window.copyPhone('${acc.number}')" title="Copy Nomor">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
             </button>
           </div>
 
-          <div class="account-item-center">
-            <span class="badge-pastel pink ${isUsed ? 'used' : ''}" onclick="window.toggleBaperanVoucherBadge('${acc.id}', event)" title="Tap status">
-              ${isUsed ? '✕ TERPAKAI' : '1 Voucher'}
+          <div class="baperan-right-group">
+            <span class="badge-baperan-voucher ${isUsed ? 'used' : 'active'}" onclick="window.toggleBaperanVoucherBadge('${acc.id}', event)" title="Tap status">
+              ${isUsed 
+                ? 'TERPAKAI <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>' 
+                : '1 Voucher'
+              }
             </span>
-            <span class="badge-pastel red ${isUsed ? 'used' : ''}">Rp8.000</span>
-          </div>
-
-          <div class="account-item-right">
             <button type="button" class="btn-dots-menu" onclick="window.openActionSheet('${acc.id}', 'kopkenBaperan', '${acc.number}', '${acc.pin || ''}')" title="Opsi">
               ⋮
             </button>

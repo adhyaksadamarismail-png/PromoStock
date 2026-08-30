@@ -3,7 +3,7 @@
    Mobile-First (iPhone 390-430px) • Colors: White, Orange #FF7A00, Navy #12284C
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
   --primary-orange: #FF7A00;
@@ -408,7 +408,7 @@ body {
 /* Device Card Container */
 .block-card-container {
   background: var(--bg-card);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: var(--shadow-card);
   padding: 12px;
   margin-bottom: 12px;
@@ -459,11 +459,7 @@ body {
 }
 
 /* ==========================================================================
-   ACCOUNT ITEM ROW (SINGLE LINE HORIZONTAL • ZERO SWIPE • NON-BOLD)
-   - 1 Straight Horizontal Line (Nomor | Copy | 3 Badges | Options)
-   - Fits 100% inside container without horizontal scrolling
-   - Height: 40px
-   - Font: Poppins 500 (Medium, NOT BOLD), 12.5px
+   ACCOUNT ITEM ROW (KOPKEN NORMAL / TOMORO)
    ========================================================================== */
 .account-item-row {
   background: #FFFFFF;
@@ -587,6 +583,134 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ==========================================================================
+   💔 KOPKEN BAPERAN SPECIFIC ROW (EXACT MOCKUP MATCH)
+   ========================================================================== */
+.baperan-account-row {
+  background: #FFFFFF;
+  border-radius: 12px;
+  min-height: 56px;
+  height: 56px;
+  padding: 0 10px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #F1F5F9;
+  gap: 8px;
+}
+
+.baperan-account-row:last-child { margin-bottom: 0; }
+
+.baperan-left-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.baperan-index-num {
+  width: 24px;
+  height: 24px;
+  background: #F1F5F9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--secondary-navy);
+  flex-shrink: 0;
+}
+
+.baperan-info-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.baperan-phone-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--secondary-navy);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.baperan-pin-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748B;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.btn-baperan-copy {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition-smooth);
+}
+
+.btn-baperan-copy:active {
+  color: var(--primary-orange);
+  background: var(--primary-orange-light);
+}
+
+.baperan-right-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Badge Baperan (1 Voucher / TERPAKAI) */
+.badge-baperan-voucher {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: var(--transition-smooth);
+}
+
+.badge-baperan-voucher.active {
+  background: #E8F5E9;
+  color: #2E7D32;
+  border: 1px solid #CEEAD6;
+}
+
+.badge-baperan-voucher.used {
+  background: #FCE8E6;
+  color: #C5221F;
+  border: 1px solid #FAD2CF;
+}
+
+.badge-baperan-voucher:active {
+  transform: scale(0.94);
 }
 
 /* Slot Kosong Row */
