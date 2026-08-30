@@ -1,6 +1,6 @@
 /**
  * PROMOHOLIC TRACKER / PROMOVAULT - Application Controller
- * OPSI B (Bright Badge / Clean iPhone Style) Implementation.
+ * Ultra-Compact OPSI B (Bright Badge / Clean iPhone Style - Zero Overflow).
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Kode akses berhasil diperbarui!', 'success');
   });
 
-  // --- Synchronized Tab Navigation (Top Pills + Bottom Navigation) ---
+  // --- Synchronized Tab Navigation ---
   function switchTab(targetTab) {
     activeTab = targetTab;
 
@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // --- Action Sheet (Menu Titik Tiga) Handler ---
+  // --- Action Sheet Handler ---
   window.openActionSheet = function(id, type, number, pin = null, deviceId = null) {
     selectedAccount = { id, type, number, pin, deviceId };
     actionSheetTargetInfo.textContent = formatPhoneDisplay(number);
@@ -554,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ==========================================================================
-  // VIEW RENDERING LOGIC (OPSI B BRIGHT BADGE / CLEAN IPHONE STYLE)
+  // VIEW RENDERING LOGIC (ULTRA-COMPACT OPSI B - NO OVERFLOW)
   // ==========================================================================
 
   function renderAllViews() {
@@ -571,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (activeTab === 'tomoroCoffee') renderTomoroCoffee();
   }
 
-  // --- Render 1: KopKen Akun (Normal) - OPSI B SPEC ---
+  // --- Render 1: KopKen Akun (Normal) - ULTRA COMPACT OPSI B ---
   function renderKopKenNormal() {
     const container = document.getElementById('kopkenNormalDevicesList');
     const devices = window.storage.getKopKenDevices();

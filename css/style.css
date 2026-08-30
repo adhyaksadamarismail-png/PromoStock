@@ -1,10 +1,10 @@
 /* ==========================================================================
-   PROMOHOLIC TRACKER / PROMOVAULT - OPSI B (BRIGHT BADGE / CLEAN IPHONE STYLE)
+   PROMOHOLIC TRACKER / PROMOVAULT - ULTRA COMPACT OPSI B (NO OVERFLOW)
    Colors: Background #FFFFFF, Navy #12284C, Orange #FF7A00, Border #ECECEC
    Badge Colors: Hijau #16A34A, Orange #F97316, Ungu #7C3AED, Merah #EF4444
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
   --primary-orange: #FF7A00;
@@ -28,12 +28,12 @@
   --badge-red-bg: #FEF2F2;
   
   --shadow-sm: 0 1px 4px rgba(18, 40, 76, 0.03);
-  --shadow-card: 0 2px 10px rgba(18, 40, 76, 0.04);
+  --shadow-card: 0 2px 8px rgba(18, 40, 76, 0.04);
   --shadow-sheet: 0 -8px 24px rgba(18, 40, 76, 0.12);
   
-  --radius-card: 20px;
+  --radius-card: 16px;
   --radius-pill: 999px;
-  --radius-btn: 10px;
+  --radius-btn: 8px;
   
   --transition-smooth: all 0.2s ease;
 }
@@ -236,7 +236,7 @@ body {
 
 .app-header {
   background: #FFFFFF;
-  padding: 10px 14px 8px;
+  padding: 10px 12px 8px;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -264,7 +264,7 @@ body {
 .header-brand-center { text-align: center; }
 
 .header-brand-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: -0.3px;
   color: var(--secondary-navy);
@@ -274,7 +274,7 @@ body {
 .header-brand-title span { color: var(--primary-orange); }
 
 .header-brand-subtitle {
-  font-size: 8.5px;
+  font-size: 8px;
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 1.5px;
@@ -286,11 +286,11 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 700;
   color: #16A34A;
   background: #DCFCE7;
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: var(--radius-pill);
 }
 
@@ -314,9 +314,9 @@ body {
 
 .tab-pill-btn {
   white-space: nowrap;
-  padding: 6px 12px;
+  padding: 5px 10px;
   font-family: inherit;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-muted);
   background: #F1F5F9;
@@ -335,7 +335,7 @@ body {
 
 /* Search Bar Area */
 .search-bar-wrapper {
-  padding: 8px 14px 4px;
+  padding: 8px 12px 4px;
   background: #FFFFFF;
 }
 
@@ -355,10 +355,10 @@ body {
 
 .search-input-pill input {
   width: 100%;
-  height: 38px;
+  height: 36px;
   padding: 0 30px 0 34px;
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 400;
   color: var(--secondary-navy);
   background: #FFFFFF;
@@ -383,7 +383,7 @@ body {
 
 /* Main Content Area */
 .app-main-content {
-  padding: 10px 14px 110px;
+  padding: 10px 10px 100px;
   flex: 1;
 }
 
@@ -396,26 +396,26 @@ body {
 }
 
 .section-title-text {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--secondary-navy);
 }
 
 .section-subtitle-text {
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 10.5px;
+  font-weight: 400;
   color: var(--text-muted);
 }
 
 /* ==========================================================================
-   OPSI B - DEVICE CARD CONTAINER
+   OPSI B - DEVICE CARD CONTAINER (COMPACT)
    ========================================================================== */
 .block-card-container {
   background: #FFFFFF;
-  border-radius: var(--radius-card);
+  border-radius: 14px;
   box-shadow: var(--shadow-card);
-  padding: 14px;
-  margin-bottom: 14px;
+  padding: 10px;
+  margin-bottom: 10px;
   border: 1px solid var(--border-card);
 }
 
@@ -423,27 +423,27 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .block-title-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .badge-block-tag {
   background: #FFF3E0;
   color: #F97316;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 6px;
-  letter-spacing: 0.3px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  letter-spacing: 0.2px;
 }
 
 .block-account-count {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--text-muted);
 }
@@ -457,28 +457,28 @@ body {
 .badge-status-full {
   background: #DCFCE7;
   color: #16A34A;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 6px;
+  padding: 1.5px 7px;
+  border-radius: 4px;
 }
 
 /* ==========================================================================
-   OPSI B - ACCOUNT ITEM ROW (BRIGHT OUTLINE BADGES • 16px BOLD PHONE)
+   OPSI B - ACCOUNT ITEM ROW (ULTRA COMPACT • NO HORIZONTAL OVERFLOW)
    ========================================================================== */
 .account-item-row {
   background: #FFFFFF;
-  border-radius: 12px;
-  height: 48px;
-  min-height: 48px;
-  padding: 0 8px;
-  margin-bottom: 8px;
+  border-radius: 10px;
+  height: 42px;
+  min-height: 42px;
+  padding: 0 6px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border: 1px solid #F1F5F9;
   white-space: nowrap;
-  gap: 6px;
+  gap: 4px;
   width: 100%;
 }
 
@@ -487,48 +487,48 @@ body {
 .account-item-left {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
 /* Status Indicator Dots */
 .status-dot-green {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   background-color: #16A34A;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .status-dot-red {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   background-color: #EF4444;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .account-index-num {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   background: #F1F5F9;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 700;
   color: var(--text-muted);
   flex-shrink: 0;
 }
 
-/* Phone Number: 16px BOLD (700) per spec */
+/* Phone Number: 13.5px SemiBold (Compact, Readable) */
 .account-phone-text {
   font-family: 'Poppins', sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--secondary-navy);
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   white-space: nowrap;
 }
 
@@ -537,13 +537,13 @@ body {
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 3px;
+  padding: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 4px;
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .btn-inline-copy:active { color: var(--primary-orange); }
@@ -551,26 +551,26 @@ body {
 .account-item-center {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
-/* OPSI B - OUTLINE BADGE STYLING */
+/* OPSI B - COMPACT OUTLINE BADGE STYLING */
 .badge-outline {
-  height: 26px;
-  padding: 0 9px;
-  border-radius: 10px;
-  font-size: 10.5px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 6px;
+  font-size: 9.5px;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
   background: #FFFFFF;
-  border: 1.5px solid transparent;
+  border: 1.2px solid transparent;
   transition: var(--transition-smooth);
 }
 
@@ -600,7 +600,8 @@ body {
   border-color: #EF4444 !important;
   color: #EF4444 !important;
   background: #FEF2F2 !important;
-  font-weight: 700;
+  font-weight: 600;
+  padding: 0 5px;
 }
 
 .account-item-right {
@@ -613,9 +614,9 @@ body {
   background: none;
   border: none;
   color: var(--secondary-navy);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  padding: 2px 4px;
+  padding: 2px 3px;
   cursor: pointer;
   border-radius: 4px;
   display: flex;
@@ -625,16 +626,16 @@ body {
 
 /* Slot Kosong Row */
 .slot-kosong-row {
-  border: 1.5px dashed #CBD5E1;
+  border: 1.2px dashed #CBD5E1;
   background: #FFFFFF;
-  border-radius: 12px;
-  height: 44px;
-  padding: 0 12px;
+  border-radius: 10px;
+  height: 38px;
+  padding: 0 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   color: var(--text-light);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 500;
   margin-bottom: 6px;
 }
@@ -644,30 +645,30 @@ body {
 .slot-kosong-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .slot-kosong-text {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 500;
 }
 
 .slot-kosong-icon {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
 }
 
 /* Info Note Card */
 .info-note-card {
   background: #EFF6FF;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 10px 12px;
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  margin-top: 10px;
-  font-size: 11px;
+  margin-top: 8px;
+  font-size: 10.5px;
   color: #1E40AF;
   line-height: 1.35;
 }
@@ -683,12 +684,12 @@ body {
 }
 
 .voucher-pastel-card {
-  border-radius: 16px;
-  padding: 14px;
+  border-radius: 14px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 95px;
+  min-height: 90px;
   border: 1px solid #ECECEC;
 }
 
@@ -697,14 +698,14 @@ body {
 .voucher-pastel-card.bg-purple { background: #EDE7F6; }
 .voucher-pastel-card.bg-white { background: #FFFFFF; }
 
-.voucher-card-head { font-size: 11px; font-weight: 700; }
+.voucher-card-head { font-size: 10.5px; font-weight: 700; }
 .voucher-pastel-card.bg-green .voucher-card-head { color: #16A34A; }
 .voucher-pastel-card.bg-orange .voucher-card-head { color: #F97316; }
 .voucher-pastel-card.bg-purple .voucher-card-head { color: #7C3AED; }
 .voucher-pastel-card.bg-white .voucher-card-head { color: var(--text-muted); }
 
 .voucher-card-big-num {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   line-height: 1;
   margin: 4px 0 2px;
@@ -713,22 +714,22 @@ body {
 .voucher-pastel-card.bg-green .voucher-card-big-num { color: #15803D; }
 .voucher-pastel-card.bg-orange .voucher-card-big-num { color: #C2410C; }
 .voucher-pastel-card.bg-purple .voucher-card-big-num { color: #6B21A8; }
-.voucher-pastel-card.bg-white .voucher-card-big-num { color: var(--primary-orange); font-size: 20px; }
+.voucher-pastel-card.bg-white .voucher-card-big-num { color: var(--primary-orange); font-size: 18px; }
 
-.voucher-card-subtext { font-size: 10.5px; color: var(--text-muted); font-weight: 500; }
+.voucher-card-subtext { font-size: 10px; color: var(--text-muted); font-weight: 500; }
 
 /* Floating Action Button (FAB) */
 .fab-btn-orange {
   position: fixed;
-  bottom: 76px;
-  right: calc(50% - 190px + 16px);
-  width: 52px;
-  height: 52px;
+  bottom: 72px;
+  right: calc(50% - 190px + 14px);
+  width: 48px;
+  height: 48px;
   background: linear-gradient(135deg, var(--primary-orange) 0%, #E66E00 100%);
   color: #FFFFFF;
   border-radius: var(--radius-pill);
   border: none;
-  box-shadow: 0 8px 20px rgba(255, 122, 0, 0.35);
+  box-shadow: 0 6px 18px rgba(255, 122, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -739,8 +740,8 @@ body {
 
 @media (max-width: 480px) {
   .fab-btn-orange {
-    right: 18px;
-    bottom: 76px;
+    right: 16px;
+    bottom: 72px;
   }
 }
 
@@ -754,7 +755,7 @@ body {
   transform: translateX(-50%);
   width: 100%;
   max-width: 430px;
-  height: 60px;
+  height: 58px;
   background: #FFFFFF;
   border-top: 1px solid #ECECEC;
   display: flex;
@@ -775,7 +776,7 @@ body {
   font-size: 9.5px;
   font-weight: 500;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 4px 6px;
   transition: var(--transition-smooth);
 }
 
@@ -784,7 +785,7 @@ body {
   font-weight: 700;
 }
 
-.bottom-nav-icon { font-size: 17px; }
+.bottom-nav-icon { font-size: 16px; }
 
 /* Modals & Action Sheet */
 .modal-overlay {
