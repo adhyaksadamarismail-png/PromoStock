@@ -595,6 +595,12 @@ body {
   background: #FFFFFF;
 }
 
+.badge-outline.pink {
+  border-color: #EC4899;
+  color: #EC4899;
+  background: #FFFFFF;
+}
+
 /* Used State (Faint Red Bg, Solid Red Border & Text) */
 .badge-outline.used {
   border-color: #EF4444 !important;
