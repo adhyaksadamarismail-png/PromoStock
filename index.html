@@ -109,6 +109,9 @@
           <button class="tab-pill-btn" data-tab="tomoroCoffee" role="tab" aria-selected="false">
             <span>🥤</span> Tomoro Coffee
           </button>
+          <button class="tab-pill-btn" data-tab="riwayat" role="tab" aria-selected="false">
+            <span>📜</span> Riwayat
+          </button>
         </nav>
       </header>
 
@@ -139,6 +142,9 @@
               <h2 class="section-title-text">KopKen Akun (Normal)</h2>
               <p class="section-subtitle-text">1 device = maksimal 3 akun/nomor</p>
             </div>
+            <button type="button" id="btnOpenResetModal" class="btn-action-outline-danger">
+              🔄 Reset Device
+            </button>
           </div>
 
           <div id="kopkenNormalDevicesList">
@@ -226,6 +232,28 @@
           </div>
         </section>
 
+        <!-- TAB 5: RIWAYAT & STOK CADANGAN -->
+        <section id="tab-riwayat" class="tab-content-view" style="display: none;">
+          <div class="section-title-bar">
+            <div>
+              <h2 class="section-title-text">📜 Riwayat & Stok Cadangan</h2>
+              <p class="section-subtitle-text">Voucher terhapus/reset yang masih aktif.</p>
+            </div>
+          </div>
+
+          <!-- History Filter Pills -->
+          <div class="history-filter-bar">
+            <button type="button" class="history-filter-btn active" data-filter="all">Semua</button>
+            <button type="button" class="history-filter-btn" data-filter="kopkenNormal">KopKen Normal</button>
+            <button type="button" class="history-filter-btn" data-filter="kopkenBaperan">KopKen Baperan</button>
+            <button type="button" class="history-filter-btn" data-filter="tomoroCoffee">Tomoro Coffee</button>
+          </div>
+
+          <div id="riwayatList">
+            <!-- Dynamic History Cards -->
+          </div>
+        </section>
+
       </main>
 
       <!-- Floating Action Button (+), shown ONLY inside Dashboard -->
@@ -253,6 +281,10 @@
         <button type="button" class="bottom-nav-item" data-tab="tomoroCoffee">
           <span class="bottom-nav-icon">🥤</span>
           <span>Tomoro Coffee</span>
+        </button>
+        <button type="button" class="bottom-nav-item" data-tab="riwayat">
+          <span class="bottom-nav-icon">📜</span>
+          <span>Riwayat</span>
         </button>
       </nav>
 
@@ -450,6 +482,59 @@
           Simpan Kode Akses Baru
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- Reset Device Selection Modal -->
+  <div id="resetDeviceModal" class="modal-overlay">
+    <div class="action-sheet-modal" style="max-width: 420px; border-radius: 20px 20px 0 0;">
+      <div class="action-sheet-drag"></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--secondary-navy); margin: 0;">🔄 Reset Device KopKen</h3>
+        <button type="button" class="btn-close-modal" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.35;">
+        Pilih device yang ingin di-reset. Akun di dalam device terpilih akan dipindahkan ke <strong>Riwayat</strong>.
+      </p>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 6px 10px; background: #F8FAFC; border-radius: 8px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--secondary-navy); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="selectAllDevicesCheckbox" style="width: 16px; height: 16px; accent-color: var(--primary-orange);"> Pilih Semua
+        </label>
+        <span id="selectedDeviceCountText" style="font-size: 11px; color: var(--primary-orange); font-weight: 700;">0 device terpilih</span>
+      </div>
+
+      <div id="resetDeviceListContainer" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; padding-right: 4px;">
+        <!-- Dynamic Device Selection Items -->
+      </div>
+
+      <button type="button" id="btnSubmitResetSelection" class="btn-primary-orange" style="background: #EF4444;" disabled>
+        Reset Device Terpilih
+      </button>
+    </div>
+  </div>
+
+  <!-- Reset Device Confirmation Modal -->
+  <div id="resetConfirmModal" class="modal-overlay">
+    <div class="action-sheet-modal" style="max-width: 360px;">
+      <div class="action-sheet-drag"></div>
+      <div style="text-align: center; padding: 10px 0;">
+        <div style="font-size: 36px; margin-bottom: 6px;">⚠️</div>
+        <h3 id="resetConfirmTitle" style="font-size: 17px; font-weight: 800; color: var(--secondary-navy); margin-bottom: 8px;">Reset 4 Device?</h3>
+        <p id="resetConfirmMessage" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.4; margin-bottom: 16px;">
+          Semua akun yang ada di Device tersebut akan dipindahkan ke Riwayat.
+        </p>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn-close-modal" style="flex: 1; height: 42px; background: #F1F5F9; color: var(--secondary-navy); border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">
+            Batal
+          </button>
+          <button type="button" id="btnExecuteReset" style="flex: 1; height: 42px; background: #EF4444; color: #FFFFFF; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">
+            Reset
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

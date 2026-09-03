@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
       targetContent.style.display = 'block';
     }
 
-    if (activeTab === 'voucherKopken') {
+    if (activeTab === 'voucherKopken' || activeTab === 'riwayat') {
       fabAddBtn.style.display = 'none';
     } else {
       fabAddBtn.style.display = 'flex';
@@ -562,6 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderKopKenBaperan();
     renderVoucherStockSummary();
     renderTomoroCoffee();
+    renderRiwayatView();
   }
 
   function renderActiveTab() {
@@ -569,6 +570,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (activeTab === 'kopkenBaperan') renderKopKenBaperan();
     else if (activeTab === 'voucherKopken') renderVoucherStockSummary();
     else if (activeTab === 'tomoroCoffee') renderTomoroCoffee();
+    else if (activeTab === 'riwayat') renderRiwayatView();
   }
 
   // --- Render 1: KopKen Akun (Normal) - ULTRA COMPACT OPSI B ---
@@ -839,6 +841,247 @@ document.addEventListener('DOMContentLoaded', () => {
     container.appendChild(cardContainer);
   }
 
+  // --- Reset Device Modal Handlers ---
+  const btnOpenResetModal = document.getElementById('btnOpenResetModal');
+  const resetDeviceModal = document.getElementById('resetDeviceModal');
+  const resetConfirmModal = document.getElementById('resetConfirmModal');
+  const selectAllDevicesCheckbox = document.getElementById('selectAllDevicesCheckbox');
+  const selectedDeviceCountText = document.getElementById('selectedDeviceCountText');
+  const resetDeviceListContainer = document.getElementById('resetDeviceListContainer');
+  const btnSubmitResetSelection = document.getElementById('btnSubmitResetSelection');
+  const btnExecuteReset = document.getElementById('btnExecuteReset');
+  const resetConfirmTitle = document.getElementById('resetConfirmTitle');
+
+  let selectedDeviceIdsForReset = new Set();
+  let historyFilter = 'all';
+
+  if (btnOpenResetModal) {
+    btnOpenResetModal.addEventListener('click', () => {
+      openResetDeviceModal();
+    });
+  }
+
+  function openResetDeviceModal() {
+    selectedDeviceIdsForReset.clear();
+    if (selectAllDevicesCheckbox) selectAllDevicesCheckbox.checked = false;
+    updateResetDeviceModalUI();
+    openModal(resetDeviceModal);
+  }
+
+  function updateResetDeviceModalUI() {
+    const devices = window.storage.getKopKenDevices();
+    resetDeviceListContainer.innerHTML = '';
+
+    if (devices.length === 0) {
+      resetDeviceListContainer.innerHTML = `
+        <div style="text-align: center; color: var(--text-muted); padding: 16px; font-size: 12px;">
+          Tidak ada device aktif untuk di-reset.
+        </div>
+      `;
+      btnSubmitResetSelection.disabled = true;
+      selectedDeviceCountText.textContent = '0 device terpilih';
+      return;
+    }
+
+    let html = '';
+    devices.forEach(dev => {
+      const isChecked = selectedDeviceIdsForReset.has(dev.id);
+      html += `
+        <label class="reset-device-select-item">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" class="device-reset-checkbox" data-id="${dev.id}" ${isChecked ? 'checked' : ''} style="width: 17px; height: 17px; accent-color: #EF4444; cursor: pointer;">
+            <div>
+              <span style="font-size: 13px; font-weight: 700; color: var(--secondary-navy); display: block;">${dev.name}</span>
+              <span style="font-size: 11px; color: var(--text-muted);">${dev.accounts.length}/3 akun</span>
+            </div>
+          </div>
+        </label>
+      `;
+    });
+
+    resetDeviceListContainer.innerHTML = html;
+
+    resetDeviceListContainer.querySelectorAll('.device-reset-checkbox').forEach(cb => {
+      cb.addEventListener('change', (e) => {
+        const devId = e.target.dataset.id;
+        if (e.target.checked) {
+          selectedDeviceIdsForReset.add(devId);
+        } else {
+          selectedDeviceIdsForReset.delete(devId);
+        }
+        const allCbs = resetDeviceListContainer.querySelectorAll('.device-reset-checkbox');
+        if (selectAllDevicesCheckbox) {
+          selectAllDevicesCheckbox.checked = selectedDeviceIdsForReset.size === allCbs.length && allCbs.length > 0;
+        }
+        updateResetButtonState();
+      });
+    });
+
+    updateResetButtonState();
+  }
+
+  function updateResetButtonState() {
+    const count = selectedDeviceIdsForReset.size;
+    selectedDeviceCountText.textContent = `${count} device terpilih`;
+    btnSubmitResetSelection.disabled = count === 0;
+  }
+
+  if (selectAllDevicesCheckbox) {
+    selectAllDevicesCheckbox.addEventListener('change', (e) => {
+      const devices = window.storage.getKopKenDevices();
+      if (e.target.checked) {
+        devices.forEach(d => selectedDeviceIdsForReset.add(d.id));
+      } else {
+        selectedDeviceIdsForReset.clear();
+      }
+      updateResetDeviceModalUI();
+    });
+  }
+
+  if (btnSubmitResetSelection) {
+    btnSubmitResetSelection.addEventListener('click', () => {
+      const count = selectedDeviceIdsForReset.size;
+      if (count === 0) return;
+      closeAllModals();
+      resetConfirmTitle.textContent = `Reset ${count} Device?`;
+      openModal(resetConfirmModal);
+    });
+  }
+
+  if (btnExecuteReset) {
+    btnExecuteReset.addEventListener('click', () => {
+      const deviceIds = Array.from(selectedDeviceIdsForReset);
+      if (deviceIds.length === 0) return;
+      window.storage.resetDevices(deviceIds);
+      closeAllModals();
+      showToast(`${deviceIds.length} Device berhasil di-reset ke Riwayat!`, 'success');
+      renderAllViews();
+    });
+  }
+
+  // --- History Filter Buttons ---
+  document.querySelectorAll('.history-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.history-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      historyFilter = btn.dataset.filter;
+      renderRiwayatView();
+    });
+  });
+
+  // --- Render 5: Riwayat & Stok Cadangan ---
+  function renderRiwayatView() {
+    const container = document.getElementById('riwayatList');
+    if (!container) return;
+
+    let history = window.storage.getHistoryAccounts();
+
+    if (historyFilter !== 'all') {
+      history = history.filter(h => h.type === historyFilter);
+    }
+
+    if (searchQuery) {
+      history = history.filter(h => 
+        h.number.toLowerCase().includes(searchQuery) || 
+        (h.pin && h.pin.toLowerCase().includes(searchQuery)) ||
+        (h.deviceName && h.deviceName.toLowerCase().includes(searchQuery))
+      );
+    }
+
+    // REQUIREMENT #4 & #5: ONLY DISPLAY UNUSED (ACTIVE) VOUCHERS IN HISTORY!
+    const activeHistory = history.filter(item => {
+      if (item.type === 'kopkenNormal') {
+        const v = item.vouchers || { tanpaMin: false, min50k: false, min70k: false };
+        return !v.tanpaMin || !v.min50k || !v.min70k;
+      } else if (item.type === 'kopkenBaperan') {
+        return !item.used;
+      } else if (item.type === 'tomoroCoffee') {
+        const v = item.vouchers || { b1g1: false, v50: false };
+        return !v.b1g1 || !v.v50;
+      }
+      return true;
+    });
+
+    container.innerHTML = '';
+
+    if (activeHistory.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state-view">
+          <div style="font-size: 24px; margin-bottom: 6px;">📜</div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--secondary-navy);">Tidak ada stok voucher aktif di Riwayat</div>
+          <div style="font-size: 11px;">Voucher di riwayat sudah terpakai seluruhnya atau belum ada akun di-reset.</div>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+
+    activeHistory.forEach(item => {
+      const displayNum = formatPhoneDisplay(item.number);
+      const pinDisplay = item.pin ? item.pin : null;
+
+      let voucherBadgesHtml = '';
+
+      if (item.type === 'kopkenNormal') {
+        const v = item.vouchers || { tanpaMin: false, min50k: false, min70k: false };
+        if (!v.tanpaMin) {
+          voucherBadgesHtml += `<span class="badge-outline green" onclick="window.toggleHistoryVoucherBadge('${item.id}', 'tanpaMin', event)" title="Tap jika sudah terpakai">🟢 Tanpa Min</span> `;
+        }
+        if (!v.min50k) {
+          voucherBadgesHtml += `<span class="badge-outline orange" onclick="window.toggleHistoryVoucherBadge('${item.id}', 'min50k', event)" title="Tap jika sudah terpakai">🟢 Min 50K</span> `;
+        }
+        if (!v.min70k) {
+          voucherBadgesHtml += `<span class="badge-outline purple" onclick="window.toggleHistoryVoucherBadge('${item.id}', 'min70k', event)" title="Tap jika sudah terpakai">🟢 Min 70K</span> `;
+        }
+      } else if (item.type === 'kopkenBaperan') {
+        if (!item.used) {
+          voucherBadgesHtml += `<span class="badge-baperan-voucher active" onclick="window.toggleHistoryVoucherBadge('${item.id}', null, event)" title="Tap jika sudah terpakai">🟢 1 Voucher</span>`;
+        }
+      } else if (item.type === 'tomoroCoffee') {
+        const v = item.vouchers || { b1g1: false, v50: false };
+        if (!v.b1g1) {
+          voucherBadgesHtml += `<span class="badge-outline orange" onclick="window.toggleHistoryVoucherBadge('${item.id}', 'b1g1', event)" title="Tap jika sudah terpakai">🟢 B1G1</span> `;
+        }
+        if (!v.v50) {
+          voucherBadgesHtml += `<span class="badge-outline purple" onclick="window.toggleHistoryVoucherBadge('${item.id}', 'v50', event)" title="Tap jika sudah terpakai">🟢 Voucher 50%</span> `;
+        }
+      }
+
+      html += `
+        <div class="riwayat-card-item">
+          <div class="riwayat-card-header">
+            <span class="riwayat-device-tag">📱 ${item.deviceName || 'DEVICE'}</span>
+            <span class="riwayat-date-text">📅 ${item.deletedAt}</span>
+          </div>
+          <div class="baperan-account-row" style="padding: 4px 0; border: none; min-height: auto;">
+            <div class="baperan-left-group">
+              <div class="baperan-info-box">
+                <span class="baperan-phone-text">${displayNum}</span>
+                ${pinDisplay ? `<span class="baperan-pin-text" onclick="window.copyPin('${pinDisplay}', event)">🔑 PIN : ${pinDisplay}</span>` : ''}
+              </div>
+            </div>
+
+            <div class="baperan-right-group">
+              <button type="button" class="btn-baperan-copy" onclick="window.copyPhone('${item.number}')" title="Copy Nomor">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+              ${voucherBadgesHtml}
+              <button type="button" class="btn-dots-menu" onclick="window.deleteHistoryAccountItem('${item.id}')" title="Hapus dari Riwayat" style="color: #EF4444; font-size: 14px;">
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  }
+
   // --- Helper Global Window Attachments ---
   window.copyPhone = function(number) {
     copyToClipboard(number, 'Nomor');
@@ -853,7 +1096,22 @@ document.addEventListener('DOMContentLoaded', () => {
   window.deleteDevice = function(deviceId, deviceName) {
     if (confirm(`Yakin hapus ${deviceName} beserta semua akun didalamnya?`)) {
       window.storage.deleteKopKenDevice(deviceId);
-      showToast(`${deviceName} berhasil dihapus.`, 'success');
+      showToast(`${deviceName} berhasil dihapus & dipindahkan ke Riwayat.`, 'success');
+      renderAllViews();
+    }
+  };
+
+  window.toggleHistoryVoucherBadge = function(historyId, voucherKey, event) {
+    if (event) event.stopPropagation();
+    window.storage.toggleHistoryVoucher(historyId, voucherKey);
+    showToast('Voucher ditandai terpakai & diperbarui dari riwayat stok.', 'info');
+    renderAllViews();
+  };
+
+  window.deleteHistoryAccountItem = function(historyId) {
+    if (confirm('Hapus akun ini dari Riwayat?')) {
+      window.storage.deleteHistoryAccount(historyId);
+      showToast('Akun dihapus dari riwayat.', 'success');
       renderAllViews();
     }
   };

@@ -1,6 +1,6 @@
 /**
  * PROMOHOLIC TRACKER / PROMOVAULT - Storage & State Management
- * Handles LocalStorage persistence, Automatic Device management, and Voucher Used Toggles.
+ * Handles LocalStorage persistence, Automatic Device management, Reset Devices, History & Voucher Stock.
  */
 
 const STORAGE_KEYS = {
@@ -8,10 +8,20 @@ const STORAGE_KEYS = {
   ACCESS_CODE: 'promoholic_access_code',
   KOPKEN_NORMAL: 'promoholic_kopken_normal_devices',
   KOPKEN_BAPERAN: 'promoholic_kopken_baperan',
-  TOMORO: 'promoholic_tomoro_coffee'
+  TOMORO: 'promoholic_tomoro_coffee',
+  NEXT_DEVICE_ID: 'promoholic_next_device_id',
+  HISTORY: 'promoholic_history_accounts'
 };
 
 const DEFAULT_ACCESS_CODE = 'PROMOHOLIC2026';
+
+function formatHistoryDate(d = new Date()) {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = months[d.getMonth()];
+  const year = d.getFullYear();
+  return `${day} ${month} ${year}`;
+}
 
 // Initial Seed Data
 const INITIAL_KOPKEN_NORMAL_DEVICES = [
@@ -64,6 +74,12 @@ class StorageManager {
     if (!localStorage.getItem(STORAGE_KEYS.TOMORO)) {
       localStorage.setItem(STORAGE_KEYS.TOMORO, JSON.stringify(INITIAL_TOMORO));
     }
+    if (!localStorage.getItem(STORAGE_KEYS.NEXT_DEVICE_ID)) {
+      localStorage.setItem(STORAGE_KEYS.NEXT_DEVICE_ID, '3');
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.HISTORY)) {
+      localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify([]));
+    }
   }
 
   cleanPhoneNumber(raw) {
@@ -101,11 +117,32 @@ class StorageManager {
     return code.trim() === this.getAccessCode();
   }
 
+  // --- Persistent Device Counter ---
+  getNextDeviceId() {
+    const val = localStorage.getItem(STORAGE_KEYS.NEXT_DEVICE_ID);
+    if (val) return parseInt(val, 10);
+    const devices = this.getKopKenDevices();
+    let max = 0;
+    devices.forEach(d => {
+      const match = d.name.match(/\d+/);
+      if (match) {
+        const num = parseInt(match[0], 10);
+        if (num > max) max = num;
+      }
+    });
+    const nextVal = Math.max(max + 1, 3);
+    this.setNextDeviceId(nextVal);
+    return nextVal;
+  }
+
+  setNextDeviceId(num) {
+    localStorage.setItem(STORAGE_KEYS.NEXT_DEVICE_ID, num.toString());
+  }
+
   // --- KopKen Normal (Devices) ---
   getKopKenDevices() {
     try {
       const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.KOPKEN_NORMAL)) || [];
-      // Ensure voucher structure on load
       data.forEach(d => {
         d.accounts.forEach(a => {
           if (!a.vouchers) {
@@ -120,10 +157,7 @@ class StorageManager {
   }
 
   saveKopKenDevices(devices) {
-    // Clean up empty devices at tail, re-index Device names
-    devices.forEach((d, idx) => {
-      d.name = `DEVICE ${idx + 1}`;
-    });
+    // Preserve exact Device Names & IDs without renumbering
     localStorage.setItem(STORAGE_KEYS.KOPKEN_NORMAL, JSON.stringify(devices));
   }
 
@@ -133,13 +167,14 @@ class StorageManager {
     let targetDevice = devices.find(d => d.accounts.length < 3);
 
     if (!targetDevice) {
-      const newDevIndex = devices.length + 1;
+      const nextId = this.getNextDeviceId();
       targetDevice = {
         id: `device-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-        name: `DEVICE ${newDevIndex}`,
+        name: `DEVICE ${nextId}`,
         accounts: []
       };
       devices.push(targetDevice);
+      this.setNextDeviceId(nextId + 1);
     }
 
     const newAcc = {
@@ -185,11 +220,11 @@ class StorageManager {
     for (const d of devices) {
       const idx = d.accounts.findIndex(a => a.id === accountId);
       if (idx !== -1) {
-        d.accounts.splice(idx, 1);
+        const [deletedAcc] = d.accounts.splice(idx, 1);
+        this.addAccountsToHistory([deletedAcc], d.name, 'kopkenNormal');
         break;
       }
     }
-    // Filter out completely empty devices unless it's the only one
     devices = devices.filter(d => d.accounts.length > 0);
     this.saveKopKenDevices(devices);
     return true;
@@ -197,6 +232,10 @@ class StorageManager {
 
   deleteKopKenDevice(deviceId) {
     let devices = this.getKopKenDevices();
+    const targetDev = devices.find(d => d.id === deviceId);
+    if (targetDev && targetDev.accounts.length > 0) {
+      this.addAccountsToHistory(targetDev.accounts, targetDev.name, 'kopkenNormal');
+    }
     devices = devices.filter(d => d.id !== deviceId);
     this.saveKopKenDevices(devices);
   }
@@ -256,6 +295,10 @@ class StorageManager {
 
   deleteBaperanAccount(id) {
     let accounts = this.getBaperanAccounts();
+    const targetAcc = accounts.find(a => a.id === id);
+    if (targetAcc) {
+      this.addAccountsToHistory([targetAcc], 'KopKen Baperan', 'kopkenBaperan');
+    }
     accounts = accounts.filter(a => a.id !== id);
     this.saveBaperanAccounts(accounts);
   }
@@ -314,8 +357,87 @@ class StorageManager {
 
   deleteTomoroAccount(id) {
     let accounts = this.getTomoroAccounts();
+    const targetAcc = accounts.find(a => a.id === id);
+    if (targetAcc) {
+      this.addAccountsToHistory([targetAcc], 'Tomoro Coffee', 'tomoroCoffee');
+    }
     accounts = accounts.filter(a => a.id !== id);
     this.saveTomoroAccounts(accounts);
+  }
+
+  // --- History & Reset Devices Management ---
+  getHistoryAccounts() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY)) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  saveHistoryAccounts(history) {
+    localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history));
+  }
+
+  addAccountsToHistory(accounts, deviceName, type) {
+    const history = this.getHistoryAccounts();
+    const formattedDate = formatHistoryDate(new Date());
+
+    accounts.forEach(acc => {
+      const historyItem = {
+        id: `hist-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+        originalId: acc.id,
+        number: acc.number,
+        pin: acc.pin || '',
+        vouchers: JSON.parse(JSON.stringify(acc.vouchers || {})),
+        used: typeof acc.used !== 'undefined' ? acc.used : false,
+        deviceName: deviceName || 'Device',
+        type: type || 'kopkenNormal',
+        deletedAt: formattedDate,
+        timestamp: Date.now()
+      };
+      history.unshift(historyItem);
+    });
+
+    this.saveHistoryAccounts(history);
+  }
+
+  resetDevices(deviceIds) {
+    const devices = this.getKopKenDevices();
+    const remainingDevices = [];
+
+    devices.forEach(d => {
+      if (deviceIds.includes(d.id)) {
+        if (d.accounts && d.accounts.length > 0) {
+          this.addAccountsToHistory(d.accounts, d.name, 'kopkenNormal');
+        }
+      } else {
+        remainingDevices.push(d);
+      }
+    });
+
+    this.saveKopKenDevices(remainingDevices);
+    return remainingDevices;
+  }
+
+  toggleHistoryVoucher(historyId, voucherKey) {
+    const history = this.getHistoryAccounts();
+    const item = history.find(h => h.id === historyId);
+    if (item) {
+      if (item.type === 'kopkenBaperan') {
+        item.used = !item.used;
+      } else if (item.vouchers && voucherKey) {
+        item.vouchers[voucherKey] = !item.vouchers[voucherKey];
+      }
+      this.saveHistoryAccounts(history);
+      return true;
+    }
+    return false;
+  }
+
+  deleteHistoryAccount(historyId) {
+    let history = this.getHistoryAccounts();
+    history = history.filter(h => h.id !== historyId);
+    this.saveHistoryAccounts(history);
   }
 
   // --- Stock Summary (Active Available Vouchers) ---
@@ -384,13 +506,14 @@ class StorageManager {
       let targetDevice = devices.find(d => d.accounts.length < 3);
 
       if (!targetDevice) {
-        const newDevIndex = devices.length + 1;
+        const nextId = this.getNextDeviceId();
         targetDevice = {
           id: `device-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-          name: `DEVICE ${newDevIndex}`,
+          name: `DEVICE ${nextId}`,
           accounts: []
         };
         devices.push(targetDevice);
+        this.setNextDeviceId(nextId + 1);
       }
 
       targetDevice.accounts.push({
