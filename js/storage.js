@@ -1,6 +1,6 @@
 /**
  * PROMOHOLIC TRACKER / PROMOVAULT - Storage & State Management
- * Handles LocalStorage persistence, Automatic Device management, Reset Devices, History & Voucher Stock.
+ * Handles LocalStorage persistence, Automatic Device management, Reset Devices, History & Auto Phone Normalization.
  */
 
 const STORAGE_KEYS = {
@@ -23,37 +23,37 @@ function formatHistoryDate(d = new Date()) {
   return `${day} ${month} ${year}`;
 }
 
-// Initial Seed Data
+// Initial Seed Data (Normalized starting with 8)
 const INITIAL_KOPKEN_NORMAL_DEVICES = [
   {
     id: 'device-1',
     name: 'DEVICE 1',
     accounts: [
-      { id: 'kn-1', number: '085612345678', vouchers: { tanpaMin: false, min50k: false, min70k: false } },
-      { id: 'kn-2', number: '085623456789', vouchers: { tanpaMin: false, min50k: true, min70k: false } },
-      { id: 'kn-3', number: '083145678901', vouchers: { tanpaMin: false, min50k: false, min70k: false } }
+      { id: 'kn-1', number: '85612345678', vouchers: { tanpaMin: false, min50k: false, min70k: false } },
+      { id: 'kn-2', number: '85623456789', vouchers: { tanpaMin: false, min50k: true, min70k: false } },
+      { id: 'kn-3', number: '83145678901', vouchers: { tanpaMin: false, min50k: false, min70k: false } }
     ]
   },
   {
     id: 'device-2',
     name: 'DEVICE 2',
     accounts: [
-      { id: 'kn-4', number: '087845678901', vouchers: { tanpaMin: false, min50k: false, min70k: false } },
-      { id: 'kn-5', number: '081234567890', vouchers: { tanpaMin: false, min50k: false, min70k: false } }
+      { id: 'kn-4', number: '87845678901', vouchers: { tanpaMin: false, min50k: false, min70k: false } },
+      { id: 'kn-5', number: '81234567890', vouchers: { tanpaMin: false, min50k: false, min70k: false } }
     ]
   }
 ];
 
 const INITIAL_KOPKEN_BAPERAN = [
-  { id: 'bp-1', number: '085698765432', pin: '882194', used: false },
-  { id: 'bp-2', number: '081377889900', pin: '142536', used: true },
-  { id: 'bp-3', number: '087711223344', pin: '990011', used: false }
+  { id: 'bp-1', number: '85698765432', pin: '882194', used: false },
+  { id: 'bp-2', number: '81377889900', pin: '142536', used: true },
+  { id: 'bp-3', number: '87711223344', pin: '990011', used: false }
 ];
 
 const INITIAL_TOMORO = [
-  { id: 'tm-1', number: '085711223344', vouchers: { b1g1: false, v50: false } },
-  { id: 'tm-2', number: '081299887766', vouchers: { b1g1: true, v50: false } },
-  { id: 'tm-3', number: '083844556677', vouchers: { b1g1: false, v50: false } }
+  { id: 'tm-1', number: '85711223344', vouchers: { b1g1: false, v50: false } },
+  { id: 'tm-2', number: '81299887766', vouchers: { b1g1: true, v50: false } },
+  { id: 'tm-3', number: '83844556677', vouchers: { b1g1: false, v50: false } }
 ];
 
 class StorageManager {
@@ -80,16 +80,96 @@ class StorageManager {
     if (!localStorage.getItem(STORAGE_KEYS.HISTORY)) {
       localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify([]));
     }
+
+    // Auto-normalize any existing numbers stored in LocalStorage upon initialization
+    this.normalizeExistingData();
   }
 
+  /**
+   * Phone Number Normalization Rule:
+   * Removes non-digits and any leading "62" or "0" prefixes so the number always starts with "8".
+   * E.g.: "6285123852107" -> "85123852107", "085123852107" -> "85123852107", "85123852107" -> "85123852107"
+   */
   cleanPhoneNumber(raw) {
     if (!raw) return '';
-    return raw.trim().replace(/[^\d+]/g, '');
+    let digits = raw.trim().replace(/\D/g, '');
+    while (digits.startsWith('62') || digits.startsWith('0')) {
+      if (digits.startsWith('62')) {
+        digits = digits.substring(2);
+      } else if (digits.startsWith('0')) {
+        digits = digits.substring(1);
+      }
+    }
+    return digits;
   }
 
   isValidPhone(phone) {
     const cleaned = this.cleanPhoneNumber(phone);
-    return cleaned.length >= 8 && cleaned.length <= 16;
+    return cleaned.length >= 7 && cleaned.length <= 15 && cleaned.startsWith('8');
+  }
+
+  normalizeExistingData() {
+    try {
+      const devices = JSON.parse(localStorage.getItem(STORAGE_KEYS.KOPKEN_NORMAL));
+      if (devices) {
+        let changed = false;
+        devices.forEach(d => {
+          d.accounts.forEach(a => {
+            const cleaned = this.cleanPhoneNumber(a.number);
+            if (cleaned !== a.number) {
+              a.number = cleaned;
+              changed = true;
+            }
+          });
+        });
+        if (changed) this.saveKopKenDevices(devices);
+      }
+    } catch (e) {}
+
+    try {
+      const accounts = JSON.parse(localStorage.getItem(STORAGE_KEYS.KOPKEN_BAPERAN));
+      if (accounts) {
+        let changed = false;
+        accounts.forEach(a => {
+          const cleaned = this.cleanPhoneNumber(a.number);
+          if (cleaned !== a.number) {
+            a.number = cleaned;
+            changed = true;
+          }
+        });
+        if (changed) this.saveBaperanAccounts(accounts);
+      }
+    } catch (e) {}
+
+    try {
+      const accounts = JSON.parse(localStorage.getItem(STORAGE_KEYS.TOMORO));
+      if (accounts) {
+        let changed = false;
+        accounts.forEach(a => {
+          const cleaned = this.cleanPhoneNumber(a.number);
+          if (cleaned !== a.number) {
+            a.number = cleaned;
+            changed = true;
+          }
+        });
+        if (changed) this.saveTomoroAccounts(accounts);
+      }
+    } catch (e) {}
+
+    try {
+      const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY));
+      if (history) {
+        let changed = false;
+        history.forEach(h => {
+          const cleaned = this.cleanPhoneNumber(h.number);
+          if (cleaned !== h.number) {
+            h.number = cleaned;
+            changed = true;
+          }
+        });
+        if (changed) this.saveHistoryAccounts(history);
+      }
+    } catch (e) {}
   }
 
   // --- Auth Session ---
@@ -145,6 +225,7 @@ class StorageManager {
       const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.KOPKEN_NORMAL)) || [];
       data.forEach(d => {
         d.accounts.forEach(a => {
+          a.number = this.cleanPhoneNumber(a.number);
           if (!a.vouchers) {
             a.vouchers = { tanpaMin: false, min50k: false, min70k: false };
           }
@@ -157,12 +238,12 @@ class StorageManager {
   }
 
   saveKopKenDevices(devices) {
-    // Preserve exact Device Names & IDs without renumbering
     localStorage.setItem(STORAGE_KEYS.KOPKEN_NORMAL, JSON.stringify(devices));
   }
 
   // Auto Add Account into Device (Max 3 per device)
   addKopKenAccount(number) {
+    const cleaned = this.cleanPhoneNumber(number);
     const devices = this.getKopKenDevices();
     let targetDevice = devices.find(d => d.accounts.length < 3);
 
@@ -179,7 +260,7 @@ class StorageManager {
 
     const newAcc = {
       id: `kn-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      number: this.cleanPhoneNumber(number),
+      number: cleaned,
       vouchers: { tanpaMin: false, min50k: false, min70k: false }
     };
 
@@ -203,11 +284,12 @@ class StorageManager {
   }
 
   updateKopKenAccount(accountId, newNumber) {
+    const cleaned = this.cleanPhoneNumber(newNumber);
     const devices = this.getKopKenDevices();
     for (const d of devices) {
       const acc = d.accounts.find(a => a.id === accountId);
       if (acc) {
-        acc.number = this.cleanPhoneNumber(newNumber);
+        acc.number = cleaned;
         this.saveKopKenDevices(devices);
         return true;
       }
@@ -245,6 +327,7 @@ class StorageManager {
     try {
       const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.KOPKEN_BAPERAN)) || [];
       data.forEach(a => {
+        a.number = this.cleanPhoneNumber(a.number);
         if (typeof a.used === 'undefined') a.used = false;
       });
       return data;
@@ -258,10 +341,11 @@ class StorageManager {
   }
 
   addBaperanAccount(number, pin) {
+    const cleaned = this.cleanPhoneNumber(number);
     const accounts = this.getBaperanAccounts();
     const newAcc = {
       id: `bp-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      number: this.cleanPhoneNumber(number),
+      number: cleaned,
       pin: pin.trim(),
       used: false
     };
@@ -282,10 +366,11 @@ class StorageManager {
   }
 
   updateBaperanAccount(id, number, pin) {
+    const cleaned = this.cleanPhoneNumber(number);
     const accounts = this.getBaperanAccounts();
     const acc = accounts.find(a => a.id === id);
     if (acc) {
-      acc.number = this.cleanPhoneNumber(number);
+      acc.number = cleaned;
       acc.pin = pin.trim();
       this.saveBaperanAccounts(accounts);
       return true;
@@ -308,6 +393,7 @@ class StorageManager {
     try {
       const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.TOMORO)) || [];
       data.forEach(a => {
+        a.number = this.cleanPhoneNumber(a.number);
         if (!a.vouchers) a.vouchers = { b1g1: false, v50: false };
       });
       return data;
@@ -321,10 +407,11 @@ class StorageManager {
   }
 
   addTomoroAccount(number) {
+    const cleaned = this.cleanPhoneNumber(number);
     const accounts = this.getTomoroAccounts();
     const newAcc = {
       id: `tm-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      number: this.cleanPhoneNumber(number),
+      number: cleaned,
       vouchers: { b1g1: false, v50: false }
     };
     accounts.unshift(newAcc);
@@ -345,10 +432,11 @@ class StorageManager {
   }
 
   updateTomoroAccount(id, number) {
+    const cleaned = this.cleanPhoneNumber(number);
     const accounts = this.getTomoroAccounts();
     const acc = accounts.find(a => a.id === id);
     if (acc) {
-      acc.number = this.cleanPhoneNumber(number);
+      acc.number = cleaned;
       this.saveTomoroAccounts(accounts);
       return true;
     }
@@ -368,7 +456,11 @@ class StorageManager {
   // --- History & Reset Devices Management ---
   getHistoryAccounts() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY)) || [];
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY)) || [];
+      data.forEach(h => {
+        h.number = this.cleanPhoneNumber(h.number);
+      });
+      return data;
     } catch (e) {
       return [];
     }
@@ -386,7 +478,7 @@ class StorageManager {
       const historyItem = {
         id: `hist-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
         originalId: acc.id,
-        number: acc.number,
+        number: this.cleanPhoneNumber(acc.number),
         pin: acc.pin || '',
         vouchers: JSON.parse(JSON.stringify(acc.vouchers || {})),
         used: typeof acc.used !== 'undefined' ? acc.used : false,
@@ -469,7 +561,7 @@ class StorageManager {
     };
   }
 
-  // --- Bulk Imports ---
+  // --- Bulk Imports (Deduplication after Normalization) ---
   bulkImportKopKenNormal(rawText) {
     let successCount = 0;
     let duplicateCount = 0;
@@ -482,7 +574,7 @@ class StorageManager {
     const devices = this.getKopKenDevices();
     const existingNumbersSet = new Set();
     devices.forEach(d => {
-      d.accounts.forEach(a => existingNumbersSet.add(a.number));
+      d.accounts.forEach(a => existingNumbersSet.add(this.cleanPhoneNumber(a.number)));
     });
 
     const lines = rawText.split(/\r?\n/);
@@ -540,7 +632,7 @@ class StorageManager {
     }
 
     const accounts = this.getBaperanAccounts();
-    const existingNumbersSet = new Set(accounts.map(a => a.number));
+    const existingNumbersSet = new Set(accounts.map(a => this.cleanPhoneNumber(a.number)));
 
     const lines = rawText.split(/\r?\n/);
 
@@ -594,7 +686,7 @@ class StorageManager {
     }
 
     const accounts = this.getTomoroAccounts();
-    const existingNumbersSet = new Set(accounts.map(a => a.number));
+    const existingNumbersSet = new Set(accounts.map(a => this.cleanPhoneNumber(a.number)));
 
     const lines = rawText.split(/\r?\n/);
 

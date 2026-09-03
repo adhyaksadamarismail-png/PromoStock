@@ -77,20 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtns = document.querySelectorAll('.close-modal-btn');
   const toastContainer = document.getElementById('toastContainer');
 
-  // Helper Phone Formatter: 8132 883 0740 or 0856 1234 5678
+  // Helper Phone Formatter: 8512 385 2107 (Always starts with 8, stripped 62 or 0)
   function formatPhoneDisplay(phone) {
     if (!phone) return '';
-    const clean = phone.replace(/\D/g, '');
-    if (clean.length === 12) {
-      return `${clean.slice(0, 4)} ${clean.slice(4, 8)} ${clean.slice(8)}`;
-    } else if (clean.length === 11) {
+    const clean = window.storage.cleanPhoneNumber(phone);
+    if (clean.length === 11) {
       return `${clean.slice(0, 4)} ${clean.slice(4, 7)} ${clean.slice(7)}`;
-    } else if (clean.length === 13) {
+    } else if (clean.length === 12) {
       return `${clean.slice(0, 4)} ${clean.slice(4, 8)} ${clean.slice(8)}`;
     } else if (clean.length === 10) {
       return `${clean.slice(0, 4)} ${clean.slice(4, 7)} ${clean.slice(7)}`;
     }
-    return phone;
+    return clean;
   }
 
   // --- Screen View Switcher ---
@@ -392,19 +390,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (targetTab === 'kopkenNormal') {
       bulkImportModalTitle.textContent = 'Bulk Import KopKen (Normal)';
-      importFormatTitle.textContent = 'Format Input: 1 nomor per baris';
-      importFormatExample.innerHTML = '085612345678<br>082134567890<br>083145678901';
-      bulkTextarea.placeholder = '085612345678\n082134567890\n083145678901';
+      importFormatTitle.textContent = 'Format Input: 1 nomor per baris (Otomatis diawali 8)';
+      importFormatExample.innerHTML = '85612345678<br>082134567890<br>6283145678901';
+      bulkTextarea.placeholder = '85612345678\n082134567890\n6283145678901';
     } else if (targetTab === 'kopkenBaperan') {
       bulkImportModalTitle.textContent = 'Bulk Import KopKen Baperan';
-      importFormatTitle.textContent = 'Format Input: Nomor|PIN per baris';
-      importFormatExample.innerHTML = '085612345678|112233<br>082134567890|889900<br>083145678901|556611';
-      bulkTextarea.placeholder = '085612345678|112233\n082134567890|889900\n083145678901|556611';
+      importFormatTitle.textContent = 'Format Input: Nomor|PIN per baris (Otomatis diawali 8)';
+      importFormatExample.innerHTML = '85612345678|112233<br>082134567890|889900<br>6283145678901|556611';
+      bulkTextarea.placeholder = '85612345678|112233\n082134567890\n6283145678901|556611';
     } else if (targetTab === 'tomoroCoffee') {
       bulkImportModalTitle.textContent = 'Bulk Import Tomoro Coffee';
-      importFormatTitle.textContent = 'Format Input: 1 nomor per baris';
-      importFormatExample.innerHTML = '081111111111<br>082222222222<br>083333333333';
-      bulkTextarea.placeholder = '081111111111\n082222222222\n083333333333';
+      importFormatTitle.textContent = 'Format Input: 1 nomor per baris (Otomatis diawali 8)';
+      importFormatExample.innerHTML = '81111111111<br>082222222222<br>6283333333333';
+      bulkTextarea.placeholder = '81111111111\n082222222222\n6283333333333';
     }
 
     openModal(bulkImportModal);
