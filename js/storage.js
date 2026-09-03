@@ -81,8 +81,75 @@ class StorageManager {
       localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify([]));
     }
 
+    // Auto-fix duplicate or corrupted device numbers in existing LocalStorage
+    this.fixAndDeduplicateDeviceNumbers();
+
     // Auto-normalize any existing numbers stored in LocalStorage upon initialization
     this.normalizeExistingData();
+  }
+
+  extractDeviceNumber(name) {
+    if (!name) return 0;
+    const match = name.match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+  }
+
+  fixAndDeduplicateDeviceNumbers() {
+    let devices = [];
+    try {
+      devices = JSON.parse(localStorage.getItem(STORAGE_KEYS.KOPKEN_NORMAL)) || [];
+    } catch (e) {
+      return;
+    }
+
+    if (!Array.isArray(devices) || devices.length === 0) return;
+
+    const seenNumbers = new Set();
+    let maxNumber = 0;
+    let hasChanges = false;
+
+    // Check max number in history
+    let history = [];
+    try {
+      history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY)) || [];
+    } catch (e) {}
+
+    history.forEach(h => {
+      if (h.deviceName) {
+        const num = this.extractDeviceNumber(h.deviceName);
+        if (num > maxNumber) maxNumber = num;
+      }
+    });
+
+    devices.forEach(d => {
+      const num = this.extractDeviceNumber(d.name);
+      if (num > maxNumber && !seenNumbers.has(num)) {
+        maxNumber = num;
+      }
+    });
+
+    // Fix duplicate or invalid device names sequentially
+    devices.forEach(d => {
+      let num = this.extractDeviceNumber(d.name);
+      if (num === 0 || seenNumbers.has(num)) {
+        maxNumber++;
+        num = maxNumber;
+        d.name = `DEVICE ${num}`;
+        d.id = `device-${num}`;
+        hasChanges = true;
+      }
+      seenNumbers.add(num);
+      if (num > maxNumber) maxNumber = num;
+    });
+
+    if (hasChanges) {
+      localStorage.setItem(STORAGE_KEYS.KOPKEN_NORMAL, JSON.stringify(devices));
+    }
+
+    const currentNext = parseInt(localStorage.getItem(STORAGE_KEYS.NEXT_DEVICE_ID) || '0', 10);
+    if (isNaN(currentNext) || currentNext <= maxNumber) {
+      this.setNextDeviceId(maxNumber + 1);
+    }
   }
 
   /**
@@ -199,20 +266,29 @@ class StorageManager {
 
   // --- Persistent Device Counter ---
   getNextDeviceId() {
-    const val = localStorage.getItem(STORAGE_KEYS.NEXT_DEVICE_ID);
-    if (val) return parseInt(val, 10);
+    let val = parseInt(localStorage.getItem(STORAGE_KEYS.NEXT_DEVICE_ID), 10);
+    
+    let maxNum = 0;
     const devices = this.getKopKenDevices();
-    let max = 0;
     devices.forEach(d => {
-      const match = d.name.match(/\d+/);
-      if (match) {
-        const num = parseInt(match[0], 10);
-        if (num > max) max = num;
+      const num = this.extractDeviceNumber(d.name);
+      if (num > maxNum) maxNum = num;
+    });
+
+    const history = this.getHistoryAccounts();
+    history.forEach(h => {
+      if (h.deviceName) {
+        const num = this.extractDeviceNumber(h.deviceName);
+        if (num > maxNum) maxNum = num;
       }
     });
-    const nextVal = Math.max(max + 1, 3);
-    this.setNextDeviceId(nextVal);
-    return nextVal;
+
+    if (isNaN(val) || val <= maxNum) {
+      val = maxNum + 1;
+      this.setNextDeviceId(val);
+    }
+
+    return val;
   }
 
   setNextDeviceId(num) {
@@ -250,7 +326,7 @@ class StorageManager {
     if (!targetDevice) {
       const nextId = this.getNextDeviceId();
       targetDevice = {
-        id: `device-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+        id: `device-${nextId}`,
         name: `DEVICE ${nextId}`,
         accounts: []
       };
@@ -600,7 +676,7 @@ class StorageManager {
       if (!targetDevice) {
         const nextId = this.getNextDeviceId();
         targetDevice = {
-          id: `device-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+          id: `device-${nextId}`,
           name: `DEVICE ${nextId}`,
           accounts: []
         };
