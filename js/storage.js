@@ -10,7 +10,9 @@ const STORAGE_KEYS = {
   KOPKEN_BAPERAN: 'promoholic_kopken_baperan',
   TOMORO: 'promoholic_tomoro_coffee',
   NEXT_DEVICE_ID: 'promoholic_next_device_id',
-  HISTORY: 'promoholic_history_accounts'
+  HISTORY: 'promoholic_history_accounts',
+  RECEIPT_PRODUCTS: 'promoholic_receipt_products',
+  RECEIPTS: 'promoholic_receipts'
 };
 
 const DEFAULT_ACCESS_CODE = 'PROMOHOLIC2026';
@@ -56,6 +58,145 @@ const INITIAL_TOMORO = [
   { id: 'tm-3', number: '83844556677', vouchers: { b1g1: false, v50: false } }
 ];
 
+const FORE_CUSTOMIZATION_SCHEMA = {
+  cup_size: {
+    category: 'Ukuran Cup',
+    options: [
+      { code: 'regular', name: 'Regular Ice', display: 'Regular', price: 0, default: true },
+      { code: 'large_6kiced', name: 'Large Ice', display: 'Large', price: 7000, default: false }
+    ]
+  },
+  sweetness: {
+    category: 'Sweetness',
+    options: [
+      { code: 'normal_sweet', name: 'Normal Sweet', display: 'Normal Sweet', price: 0, default: true },
+      { code: 'less_sweet', name: 'Less Sweet', display: 'Less Sweet', price: 0, default: false }
+    ]
+  },
+  ice: {
+    category: 'Ice Cube',
+    options: [
+      { code: 'normal_ice', name: 'Normal Ice', display: 'Normal Ice', price: 0, default: true },
+      { code: 'less_ice', name: 'Less Ice', display: 'Less Ice', price: 0, default: false },
+      { code: 'more_ice', name: 'More Ice', display: 'More Ice', price: 0, default: false },
+      { code: 'no_ice', name: 'No Ice', display: 'No Ice', price: 0, default: false },
+      { code: 'ice_separately', name: 'Ice Separately', display: 'Ice Separately', price: 0, default: false }
+    ]
+  },
+  espresso: {
+    category: 'Espresso',
+    options: [
+      { code: 'normal_shot', name: 'Normal Shot', display: 'Normal Shot', price: 0, default: true },
+      { code: 'shot_1', name: '+1 Shot', display: '+1 Shot', price: 7000, default: false },
+      { code: 'shot_2', name: '+2 Shot', display: '+2 Shot', price: 14000, default: false }
+    ]
+  },
+  dairy: {
+    category: 'Dairy',
+    options: [
+      { code: 'milk', name: 'Milk', display: 'Milk', price: 0, default: true },
+      { code: 'oat_milk', name: 'Oat Milk', display: 'Oat Milk', price: 15000, default: false },
+      { code: 'almond_milk', name: 'Almond Milk', display: 'Almond Milk', price: 15000, default: false },
+      { code: 'soy_multigrain', name: 'Soy Multigrain', display: 'Soy Multigrain', price: 7000, default: false }
+    ]
+  },
+  syrup: {
+    category: 'Syrup',
+    isMultiple: true,
+    maxMultiple: 2,
+    options: [
+      { code: 'pandan', name: 'Pandan', display: 'Pandan', price: 7000 },
+      { code: 'aren', name: 'Aren', display: 'Aren', price: 7000 },
+      { code: 'hazelnut', name: 'Hazelnut', display: 'Hazelnut', price: 7000 },
+      { code: 'vanilla', name: 'Vanilla', display: 'Vanilla', price: 7000 },
+      { code: 'salted_caramel', name: 'Salted Caramel', display: 'Salted Caramel', price: 7000 }
+    ]
+  },
+  topping: {
+    category: 'Topping',
+    isMultiple: true,
+    maxMultiple: 2,
+    options: [
+      { code: 'caramel_sauce', name: 'Caramel Sauce', display: 'Caramel Sauce', price: 7000 },
+      { code: 'crumble', name: 'Crumble', display: 'Crumble', price: 7000 },
+      { code: 'sea_salt_cream', name: 'Sea Salt Cream', display: 'Sea Salt Cream', price: 7000 },
+      { code: 'oreo_crumbs', name: 'Oreo Crumbs', display: 'Oreo Crumbs', price: 7000 }
+    ]
+  }
+};
+
+const INITIAL_FORE_PRODUCTS = [
+  // FORE SIGNATURE
+  { id: 'p-1', brand: 'Fore Coffee', category: 'FORE SIGNATURE', product_name: 'Kopi Dari Tani', original_price: 25000, discounted_price: 21000, active: true },
+  { id: 'p-2', brand: 'Fore Coffee', category: 'FORE SIGNATURE', product_name: 'Butterscotch Sea Salt Latte', original_price: 33000, discounted_price: 27000, active: true },
+  { id: 'p-3', brand: 'Fore Coffee', category: 'FORE SIGNATURE', product_name: 'Buttercream Latte', original_price: 33000, discounted_price: 25000, active: true },
+  { id: 'p-4', brand: 'Fore Coffee', category: 'FORE SIGNATURE', product_name: 'Aren Latte', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-5', brand: 'Fore Coffee', category: 'FORE SIGNATURE', product_name: 'Pandan Latte', original_price: 29000, discounted_price: 24000, active: true },
+
+  // COFFEE
+  { id: 'p-6', brand: 'Fore Coffee', category: 'COFFEE', product_name: 'Espresso', original_price: 21000, discounted_price: 18000, active: true },
+  { id: 'p-7', brand: 'Fore Coffee', category: 'COFFEE', product_name: 'Bumi Latte', original_price: 25000, discounted_price: 21000, active: true },
+  { id: 'p-8', brand: 'Fore Coffee', category: 'COFFEE', product_name: 'Malty Latte', original_price: 27000, discounted_price: 22000, active: true },
+  { id: 'p-9', brand: 'Fore Coffee', category: 'COFFEE', product_name: 'Cappuccino', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-10', brand: 'Fore Coffee', category: 'COFFEE', product_name: 'Café Latte', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-11', brand: 'Fore Coffee', category: 'COFFEE', product_name: 'Dirty Matchapresso', original_price: 31000, discounted_price: 25000, active: true },
+  { id: 'p-12', brand: 'Fore Coffee', category: 'COFFEE', product_name: 'Double Iced Shaken Latte', original_price: 33000, discounted_price: 27000, active: true },
+  { id: 'p-13', brand: 'Fore Coffee', category: 'COFFEE', product_name: 'Buttercream Tiramisu Latte', original_price: 34000, discounted_price: 28000, active: true },
+  { id: 'p-14', brand: 'Fore Coffee', category: 'COFFEE', product_name: 'Caramel Praline Macchiato', original_price: 34000, discounted_price: 28000, active: true },
+  { id: 'p-15', brand: 'Fore Coffee', category: 'COFFEE', product_name: 'Nutty Oat Latte', original_price: 39000, discounted_price: 31000, active: true },
+
+  // AMERICANO SERIES
+  { id: 'p-16', brand: 'Fore Coffee', category: 'AMERICANO SERIES', product_name: 'Americano', original_price: 23000, discounted_price: 19000, active: true },
+  { id: 'p-17', brand: 'Fore Coffee', category: 'AMERICANO SERIES', product_name: 'Manuka Americano', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-18', brand: 'Fore Coffee', category: 'AMERICANO SERIES', product_name: 'Triple Peach Americano', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-19', brand: 'Fore Coffee', category: 'AMERICANO SERIES', product_name: 'Berry Manuka Americano', original_price: 31000, discounted_price: 25000, active: true },
+
+  // NON COFFEE
+  { id: 'p-20', brand: 'Fore Coffee', category: 'NON COFFEE', product_name: 'Classic Milo', original_price: 25000, discounted_price: 21000, active: true },
+  { id: 'p-21', brand: 'Fore Coffee', category: 'NON COFFEE', product_name: 'Matcha Butter Salt Cream', original_price: 31000, discounted_price: 25000, active: true },
+  { id: 'p-22', brand: 'Fore Coffee', category: 'NON COFFEE', product_name: 'Dark Chocolate', original_price: 34000, discounted_price: 28000, active: true },
+  { id: 'p-23', brand: 'Fore Coffee', category: 'NON COFFEE', product_name: 'Matcha Green Tea', original_price: 34000, discounted_price: 28000, active: true },
+  { id: 'p-24', brand: 'Fore Coffee', category: 'NON COFFEE', product_name: 'Almond Choco', original_price: 39000, discounted_price: 31000, active: true },
+
+  // FORE JUNIOR
+  { id: 'p-25', brand: 'Fore Coffee', category: 'FORE JUNIOR', product_name: "Choco Cookie Shake", original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-26', brand: 'Fore Coffee', category: 'FORE JUNIOR', product_name: 'Butterscotch Milk Crumble', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-27', brand: 'Fore Coffee', category: 'FORE JUNIOR', product_name: "Vanilla O' Crumbs", original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-28', brand: 'Fore Coffee', category: 'FORE JUNIOR', product_name: 'Choco Caramel Cloud', original_price: 29000, discounted_price: 24000, active: true },
+
+  // FORE DELI
+  { id: 'p-29', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Butter Croissant', original_price: 24000, discounted_price: 20000, active: true },
+  { id: 'p-30', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Roll Cake Cheese Pandan', original_price: 27000, discounted_price: 22000, active: true },
+  { id: 'p-31', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Roll Cake Peanut Butter & Jam', original_price: 27000, discounted_price: 22000, active: true },
+  { id: 'p-32', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Roll Cake Mocha', original_price: 27000, discounted_price: 22000, active: true },
+  { id: 'p-33', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Banana Chocolate Cake', original_price: 27000, discounted_price: 22000, active: true },
+  { id: 'p-34', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Cempedak Cake', original_price: null, discounted_price: 22000, active: true },
+  { id: 'p-35', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Pain au Chocolat', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-36', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Kouign-Amann', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-37', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Beef & Omelette Toast', original_price: 36000, discounted_price: 29000, active: true },
+  { id: 'p-38', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Cakalang Quiche', original_price: null, discounted_price: 29000, active: true },
+  { id: 'p-39', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Pain au Tiramisu', original_price: null, discounted_price: 29000, active: true },
+  { id: 'p-40', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Blueberry Cheese Muffin', original_price: 36000, discounted_price: 29000, active: true },
+  { id: 'p-41', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Choco Melt Muffin', original_price: 36000, discounted_price: 29000, active: true },
+  { id: 'p-42', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Triple Cheese Danish', original_price: 36000, discounted_price: 29000, active: true },
+  { id: 'p-43', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Almond Croissant', original_price: 36000, discounted_price: 29000, active: true },
+  { id: 'p-44', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Beef Mentai Sandwich', original_price: 39000, discounted_price: 31000, active: true },
+  { id: 'p-45', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Chicken Teriyaki Sandwich', original_price: 39000, discounted_price: 31000, active: true },
+  { id: 'p-46', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Smoked Beef & Cheese Sandwich', original_price: 39000, discounted_price: 31000, active: true },
+  { id: 'p-47', brand: 'Fore Coffee', category: 'FORE DELI', product_name: 'Mushroom Truffle Sandwich', original_price: 42000, discounted_price: 34000, active: true },
+
+  // REFRESHER
+  { id: 'p-48', brand: 'Fore Coffee', category: 'REFRESHER', product_name: 'Hibiscus Lychee Peach Yakult', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-49', brand: 'Fore Coffee', category: 'REFRESHER', product_name: 'Coco Peach Fusion', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-50', brand: 'Fore Coffee', category: 'REFRESHER', product_name: 'Sunny Citrus Jasmine', original_price: 31000, discounted_price: 25000, active: true },
+
+  // TEA
+  { id: 'p-51', brand: 'Fore Coffee', category: 'TEA', product_name: 'English Breakfast', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-52', brand: 'Fore Coffee', category: 'TEA', product_name: 'Green Tea Jasmine', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-53', brand: 'Fore Coffee', category: 'TEA', product_name: 'Pure Chamomile', original_price: 29000, discounted_price: 24000, active: true },
+  { id: 'p-54', brand: 'Fore Coffee', category: 'TEA', product_name: 'Green Tea Mint', original_price: 29000, discounted_price: 24000, active: true }
+];
+
 class StorageManager {
   constructor() {
     this.init();
@@ -79,6 +220,12 @@ class StorageManager {
     }
     if (!localStorage.getItem(STORAGE_KEYS.HISTORY)) {
       localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify([]));
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.RECEIPT_PRODUCTS)) {
+      localStorage.setItem(STORAGE_KEYS.RECEIPT_PRODUCTS, JSON.stringify(INITIAL_FORE_PRODUCTS));
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.RECEIPTS)) {
+      localStorage.setItem(STORAGE_KEYS.RECEIPTS, JSON.stringify([]));
     }
 
     // Auto-fix duplicate or corrupted device numbers in existing LocalStorage
@@ -795,6 +942,102 @@ class StorageManager {
     this.saveTomoroAccounts(accounts);
     return { successCount, duplicateCount, invalidCount };
   }
+
+  // --- E-RECEIPT MASTER PRODUCTS ---
+  getReceiptProducts(brand = null) {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.RECEIPT_PRODUCTS);
+      const list = data ? JSON.parse(data) : INITIAL_FORE_PRODUCTS;
+      if (!brand) return list;
+      return list.filter(p => p.brand.toLowerCase() === brand.toLowerCase());
+    } catch (e) {
+      return INITIAL_FORE_PRODUCTS;
+    }
+  }
+
+  saveReceiptProducts(products) {
+    localStorage.setItem(STORAGE_KEYS.RECEIPT_PRODUCTS, JSON.stringify(products));
+  }
+
+  getBrandCustomizationSchema(brand = 'Fore Coffee') {
+    return FORE_CUSTOMIZATION_SCHEMA;
+  }
+
+  getReceiptProductById(id) {
+    const products = this.getReceiptProducts();
+    return products.find(p => p.id === id) || null;
+  }
+
+  addOrUpdateReceiptProduct(product) {
+    const products = this.getReceiptProducts();
+    const existingIndex = products.findIndex(p => p.id === product.id);
+    if (existingIndex >= 0) {
+      products[existingIndex] = { ...products[existingIndex], ...product, updated_at: new Date().toISOString() };
+    } else {
+      product.id = product.id || `p-${Date.now()}`;
+      product.created_at = new Date().toISOString();
+      products.push(product);
+    }
+    this.saveReceiptProducts(products);
+    return product;
+  }
+
+  // --- E-RECEIPTS HISTORY ---
+  getReceipts() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.RECEIPTS);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  getReceiptByNumber(receiptNumber) {
+    if (!receiptNumber) return null;
+    const receipts = this.getReceipts();
+    const cleanNo = receiptNumber.trim().toUpperCase();
+    return receipts.find(r => r.receipt_number.toUpperCase() === cleanNo) || null;
+  }
+
+  saveReceipt(receiptData) {
+    const receipts = this.getReceipts();
+    if (!receiptData.id) {
+      receiptData.id = `rcpt-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    }
+    if (!receiptData.receipt_number) {
+      receiptData.receipt_number = this.generateReceiptNumber();
+    }
+    receiptData.created_at = receiptData.created_at || new Date().toISOString();
+
+    const existingIndex = receipts.findIndex(r => r.id === receiptData.id || r.receipt_number === receiptData.receipt_number);
+    if (existingIndex >= 0) {
+      receipts[existingIndex] = { ...receipts[existingIndex], ...receiptData };
+    } else {
+      receipts.unshift(receiptData);
+    }
+    localStorage.setItem(STORAGE_KEYS.RECEIPTS, JSON.stringify(receipts));
+    return receiptData;
+  }
+
+  deleteReceipt(id) {
+    let receipts = this.getReceipts();
+    receipts = receipts.filter(r => r.id !== id && r.receipt_number !== id);
+    localStorage.setItem(STORAGE_KEYS.RECEIPTS, JSON.stringify(receipts));
+  }
+
+  generateReceiptNumber() {
+    const receipts = this.getReceipts();
+    const now = new Date();
+    const yy = String(now.getFullYear()).slice(-2);
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const datePrefix = `PH${yy}${mm}${dd}`;
+
+    const todayReceipts = receipts.filter(r => r.receipt_number && r.receipt_number.startsWith(datePrefix));
+    const nextSeq = String(todayReceipts.length + 1).padStart(4, '0');
+    return `${datePrefix}${nextSeq}`;
+  }
 }
 
 window.storage = new StorageManager();
+

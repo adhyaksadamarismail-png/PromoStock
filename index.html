@@ -6,6 +6,7 @@
   <title>PROMOVAULT — Internal Voucher Manager</title>
   <meta name="description" content="Aplikasi internal admin PromoHolic untuk menyimpan dan mengelola akun voucher Kopi Kenangan & Tomoro Coffee.">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -14,6 +15,34 @@
 
   <!-- Mobile Viewport Container (iPhone 390-430px) -->
   <div class="app-viewport">
+
+    <!-- ========================================== -->
+    <!-- 🌐 PUBLIC RECEIPT VIEW (CUSTOMER ACCESS) -->
+    <!-- ========================================== -->
+    <div id="publicReceiptView" class="screen-view public-receipt-screen" style="display: none;">
+      <div class="public-receipt-header">
+        <div class="public-receipt-brand">PROMO<span>HOLIC</span> E-RECEIPT</div>
+        <a href="#" id="publicBackToAppBtn" class="btn-public-back">← Back to App</a>
+      </div>
+
+      <div class="public-receipt-body">
+        <!-- Rendered Customer Receipt -->
+        <div id="publicReceiptCardContainer">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <div class="public-receipt-actions">
+          <button type="button" id="btnPublicDownloadPng" class="btn-primary-orange">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download PNG
+          </button>
+          <button type="button" id="btnPublicShare" class="btn-action-outline">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            Share
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- ========================================== -->
     <!-- 🔐 SCREEN 1: LOGIN PAGE (SEPARATE VIEW) -->
@@ -111,6 +140,9 @@
           </button>
           <button class="tab-pill-btn" data-tab="riwayat" role="tab" aria-selected="false">
             <span>📜</span> Riwayat
+          </button>
+          <button class="tab-pill-btn" data-tab="eReceipt" role="tab" aria-selected="false">
+            <span>🧾</span> E-Receipt
           </button>
         </nav>
       </header>
@@ -254,6 +286,205 @@
           </div>
         </section>
 
+        <!-- TAB 6: E-RECEIPT GENERATOR & MANAGEMENT -->
+        <section id="tab-eReceipt" class="tab-content-view" style="display: none;">
+          <div class="section-title-bar">
+            <div>
+              <h2 class="section-title-text">🧾 E-Receipt Jasdor</h2>
+              <p class="section-subtitle-text">Buat & kelola e-receipt modern untuk customer</p>
+            </div>
+          </div>
+
+          <!-- E-Receipt Sub-Navigation Pills -->
+          <div class="ereceipt-subnav-bar">
+            <button type="button" id="subtabGenBtn" class="ereceipt-subnav-btn active">⚡ Generator</button>
+            <button type="button" id="subtabHistBtn" class="ereceipt-subnav-btn">📜 Riwayat Receipt</button>
+            <button type="button" id="subtabMasterBtn" class="ereceipt-subnav-btn">🏷️ Master Harga</button>
+          </div>
+
+          <!-- SUB-VIEW 1: RECEIPT GENERATOR -->
+          <div id="ereceiptGeneratorView" class="ereceipt-view-container">
+            <div class="ereceipt-grid-layout">
+              
+              <!-- Form Admin Column -->
+              <div class="ereceipt-form-card">
+                <h3 class="ereceipt-card-title">Data Receipt Admin</h3>
+
+                <form id="eReceiptForm" onsubmit="return false;">
+                  <!-- Brand Selection -->
+                  <div class="form-group-er">
+                    <label>Brand</label>
+                    <select id="erBrandSelect" class="form-control">
+                      <option value="Fore Coffee" selected>Fore Coffee</option>
+                    </select>
+                  </div>
+
+                  <!-- Outlet Information -->
+                  <div class="form-row-2">
+                    <div class="form-group-er">
+                      <label>Nama Outlet *</label>
+                      <input type="text" id="erOutletName" class="form-control" placeholder="Contoh: Sipin" value="Sipin" required>
+                    </div>
+                    <div class="form-group-er">
+                      <label>Kota *</label>
+                      <input type="text" id="erOutletCity" class="form-control" placeholder="Contoh: Jambi" value="Jambi" required>
+                    </div>
+                  </div>
+                  <div class="form-group-er">
+                    <label>Alamat Outlet <span class="text-muted">(Optional)</span></label>
+                    <input type="text" id="erOutletAddress" class="form-control" placeholder="Contoh: Jl. Sipin Raya No. 12">
+                  </div>
+
+                  <!-- Customer Information -->
+                  <div class="form-group-er">
+                    <label>Nama Customer *</label>
+                    <input type="text" id="erCustomerName" class="form-control" placeholder="Contoh: CYNTIA" value="CYNTIA" required>
+                  </div>
+
+                  <!-- Order & Request -->
+                  <div class="form-group-er">
+                    <label>Request Customer <span class="text-muted">(Optional)</span></label>
+                    <textarea id="erCustomerRequest" class="form-control" rows="2" placeholder="Contoh: 2 kopi, 1 less ice, pickup jam 18.00"></textarea>
+                  </div>
+
+                  <div class="form-row-2">
+                    <div class="form-group-er">
+                      <label>Nomor Order / Pickup</label>
+                      <input type="text" id="erPickupNumber" class="form-control" placeholder="Contoh: 1021" value="1021">
+                    </div>
+                    <div class="form-group-er">
+                      <label>Nomor Transaksi</label>
+                      <input type="text" id="erTransNumber" class="form-control" placeholder="Contoh: #260914070516">
+                    </div>
+                  </div>
+
+                  <!-- Date & Time (Default Asia/Jakarta current time) -->
+                  <div class="form-group-er">
+                    <label>Tanggal & Jam (Asia/Jakarta)</label>
+                    <input type="text" id="erOrderDateTime" class="form-control" placeholder="Friday, 4 September 2026, 09:03 WIB">
+                  </div>
+
+                  <!-- Order Items List -->
+                  <div class="er-items-header">
+                    <label style="font-weight: 700;">Item Order Customer</label>
+                    <span class="text-muted" style="font-size: 11px;">Harga otomatis dari master pricing</span>
+                  </div>
+
+                  <div id="erItemRowsContainer" class="er-items-list">
+                    <!-- Dynamic item rows -->
+                  </div>
+
+                  <button type="button" id="erBtnAddItem" class="btn-action-outline-full">
+                    + Tambah Menu Item
+                  </button>
+
+                  <!-- Payment Method -->
+                  <div class="form-group-er" style="margin-top: 16px;">
+                    <label>Metode Pembayaran</label>
+                    <select id="erPaymentMethod" class="form-control">
+                      <option value="QRIS" selected>QRIS</option>
+                      <option value="Transfer">Transfer</option>
+                      <option value="Cash">Cash</option>
+                      <option value="E-Wallet">E-Wallet</option>
+                      <option value="Custom">Custom</option>
+                    </select>
+                  </div>
+
+                  <!-- Catatan / Notes -->
+                  <div class="form-group-er">
+                    <label>Catatan / Notes <span class="text-muted">(Optional)</span></label>
+                    <input type="text" id="erNotesInput" class="form-control" placeholder="Contoh: Pickup jam 18.00">
+                  </div>
+
+                  <!-- Display Toggles -->
+                  <div class="er-toggles-card">
+                    <label class="er-checkbox-label">
+                      <input type="checkbox" id="erToggleShowOriginal">
+                      <span>Tampilkan harga normal & penghematan</span>
+                    </label>
+                    <label class="er-checkbox-label">
+                      <input type="checkbox" id="erToggleShowRequest" checked>
+                      <span>Tampilkan Request Customer di receipt</span>
+                    </label>
+                    <label class="er-checkbox-label">
+                      <input type="checkbox" id="erToggleShowNotes" checked>
+                      <span>Tampilkan Catatan di receipt</span>
+                    </label>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="er-actions-grid">
+                    <button type="button" id="erBtnGeneratePng" class="btn-primary-orange">
+                      📸 Generate Receipt (PNG)
+                    </button>
+                    <button type="button" id="erBtnShare" class="btn-action-outline">
+                      📲 Share WhatsApp
+                    </button>
+                    <button type="button" id="erBtnSaveReceipt" class="btn-action-secondary">
+                      💾 Simpan Ke Riwayat
+                    </button>
+                    <button type="button" id="erBtnPrintPdf" class="btn-action-ghost">
+                      📄 Print / PDF
+                    </button>
+                    <button type="button" id="erBtnResetForm" class="btn-action-danger">
+                      🔄 Reset Form
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Live Preview Column -->
+              <div class="ereceipt-preview-card">
+                <div class="ereceipt-preview-header">
+                  <span class="preview-badge">LIVE PREVIEW</span>
+                  <span style="font-size: 11px; color: var(--text-muted);">Receipt Customer (White Thermal Style)</span>
+                </div>
+
+                <!-- Thermal Paper Container -->
+                <div class="thermal-paper-wrapper">
+                  <div id="ereceiptPaperPreview" class="thermal-receipt-paper">
+                    <!-- Dynamic Receipt Preview -->
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- SUB-VIEW 2: RECEIPT HISTORY -->
+          <div id="ereceiptHistoryView" class="ereceipt-view-container" style="display: none;">
+            <div class="history-search-bar">
+              <input type="text" id="erHistorySearchInput" class="form-control" placeholder="Cari nomor receipt, nama customer, outlet…">
+            </div>
+
+            <div id="erHistoryListContainer" class="er-history-grid">
+              <!-- Dynamic Saved Receipts Cards -->
+            </div>
+          </div>
+
+          <!-- SUB-VIEW 3: MASTER PRICING -->
+          <div id="ereceiptMasterView" class="ereceipt-view-container" style="display: none;">
+            <div class="master-header-bar">
+              <div>
+                <h3 style="font-size: 16px; font-weight: 700;">Master Pricing Produk</h3>
+                <p style="font-size: 12px; color: var(--text-muted);">Kelola harga original & harga jasdor untuk setiap menu</p>
+              </div>
+              <button type="button" id="erBtnAddMasterProduct" class="btn-primary-orange" style="width: auto; padding: 0 16px;">
+                + Tambah Produk
+              </button>
+            </div>
+
+            <div class="master-category-tabs" id="erMasterCategoryTabs">
+              <!-- Dynamic Category Pills -->
+            </div>
+
+            <div id="erMasterProductsList" class="master-products-grid">
+              <!-- Dynamic Master Product Cards -->
+            </div>
+          </div>
+
+        </section>
+
       </main>
 
       <!-- Floating Action Button (+), shown ONLY inside Dashboard -->
@@ -285,6 +516,10 @@
         <button type="button" class="bottom-nav-item" data-tab="riwayat">
           <span class="bottom-nav-icon">📜</span>
           <span>Riwayat</span>
+        </button>
+        <button type="button" class="bottom-nav-item" data-tab="eReceipt">
+          <span class="bottom-nav-icon">🧾</span>
+          <span>E-Receipt</span>
         </button>
       </nav>
 
@@ -534,6 +769,75 @@
             Reset
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Master Product Add/Edit Modal -->
+  <div id="erMasterProductModal" class="modal-overlay">
+    <div class="action-sheet-modal" style="max-width: 420px;">
+      <div class="action-sheet-drag"></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <h3 id="erProductModalTitle" style="font-size: 16px; font-weight: 700;">Tambah/Edit Produk Master</h3>
+        <button type="button" class="close-modal-btn" style="background: none; border: none; font-size: 20px;">&times;</button>
+      </div>
+
+      <form id="erProductForm">
+        <input type="hidden" id="erProductId">
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Brand</label>
+          <input type="text" id="erProdBrand" class="form-control" value="Fore Coffee" required>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Kategori</label>
+          <input type="text" id="erProdCategory" class="form-control" placeholder="Contoh: FORE SIGNATURE" required>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Nama Produk</label>
+          <input type="text" id="erProdName" class="form-control" placeholder="Contoh: Butterscotch Sea Salt Latte" required>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+          <div style="flex: 1;">
+            <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Harga Original (Normal)</label>
+            <input type="number" id="erProdOriginalPrice" class="form-control" placeholder="Contoh: 33000 (Kosongkan jika UNKNOWN)">
+          </div>
+          <div style="flex: 1;">
+            <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Harga Jasdor *</label>
+            <input type="number" id="erProdDiscountedPrice" class="form-control" placeholder="Contoh: 27000" required>
+          </div>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" id="erProdActive" checked style="width: 16px; height: 16px; accent-color: var(--primary-orange);"> Aktif (Dapat dipilih di E-Receipt)
+          </label>
+        </div>
+        <button type="submit" class="btn-primary-orange">Simpan Produk</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Saved Receipt View / Preview Modal -->
+  <div id="erReceiptViewModal" class="modal-overlay">
+    <div class="action-sheet-modal" style="max-width: 440px; padding: 20px 16px;">
+      <div class="action-sheet-drag"></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+        <h3 id="erModalReceiptNumberTitle" style="font-size: 15px; font-weight: 800; color: var(--secondary-navy); margin: 0;">E-Receipt Preview</h3>
+        <button type="button" class="close-modal-btn" style="background: none; border: none; font-size: 20px;">&times;</button>
+      </div>
+
+      <div class="thermal-paper-wrapper" style="margin-bottom: 16px; max-height: 420px; overflow-y: auto;">
+        <div id="erModalPaperPreview" class="thermal-receipt-paper">
+          <!-- Rendered Saved Receipt -->
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button type="button" id="erModalBtnDownloadPng" class="btn-primary-orange" style="flex: 1;">
+          📸 Download PNG
+        </button>
+        <button type="button" id="erModalBtnCopyLink" class="btn-action-outline" style="flex: 1;">
+          🔗 Copy Link Public
+        </button>
       </div>
     </div>
   </div>
