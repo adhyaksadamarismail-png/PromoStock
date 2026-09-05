@@ -241,6 +241,30 @@ class StorageManager {
     return match ? parseInt(match[0], 10) : 0;
   }
 
+  findOrCreateSmallestAvailableDevice(devices) {
+    devices.sort((a, b) => this.extractDeviceNumber(a.name) - this.extractDeviceNumber(b.name));
+
+    let n = 1;
+    while (true) {
+      const existing = devices.find(d => this.extractDeviceNumber(d.name) === n);
+      if (existing) {
+        if (existing.accounts.length < 3) {
+          return existing;
+        }
+        n++;
+      } else {
+        const newDev = {
+          id: `device-${n}`,
+          name: `DEVICE ${n}`,
+          accounts: []
+        };
+        devices.push(newDev);
+        devices.sort((a, b) => this.extractDeviceNumber(a.name) - this.extractDeviceNumber(b.name));
+        return newDev;
+      }
+    }
+  }
+
   fixAndDeduplicateDeviceNumbers() {
     let devices = [];
     try {
@@ -251,51 +275,23 @@ class StorageManager {
 
     if (!Array.isArray(devices) || devices.length === 0) return;
 
-    const seenNumbers = new Set();
-    let maxNumber = 0;
-    let hasChanges = false;
+    // Filter out empty devices
+    devices = devices.filter(d => d.accounts && d.accounts.length > 0);
 
-    // Check max number in history
-    let history = [];
-    try {
-      history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY)) || [];
-    } catch (e) {}
+    // Sort by current device number
+    devices.sort((a, b) => this.extractDeviceNumber(a.name) - this.extractDeviceNumber(b.name));
 
-    history.forEach(h => {
-      if (h.deviceName) {
-        const num = this.extractDeviceNumber(h.deviceName);
-        if (num > maxNumber) maxNumber = num;
-      }
-    });
+    const numbers = devices.map(d => this.extractDeviceNumber(d.name));
+    const hasDuplicates = new Set(numbers).size !== numbers.length;
+    const startsHigh = numbers.length > 0 && numbers[0] > 1;
 
-    devices.forEach(d => {
-      const num = this.extractDeviceNumber(d.name);
-      if (num > maxNumber && !seenNumbers.has(num)) {
-        maxNumber = num;
-      }
-    });
-
-    // Fix duplicate or invalid device names sequentially
-    devices.forEach(d => {
-      let num = this.extractDeviceNumber(d.name);
-      if (num === 0 || seenNumbers.has(num)) {
-        maxNumber++;
-        num = maxNumber;
-        d.name = `DEVICE ${num}`;
-        d.id = `device-${num}`;
-        hasChanges = true;
-      }
-      seenNumbers.add(num);
-      if (num > maxNumber) maxNumber = num;
-    });
-
-    if (hasChanges) {
+    if (hasDuplicates || startsHigh) {
+      devices.forEach((d, idx) => {
+        const expectedNum = idx + 1;
+        d.name = `DEVICE ${expectedNum}`;
+        d.id = `device-${expectedNum}`;
+      });
       localStorage.setItem(STORAGE_KEYS.KOPKEN_NORMAL, JSON.stringify(devices));
-    }
-
-    const currentNext = parseInt(localStorage.getItem(STORAGE_KEYS.NEXT_DEVICE_ID) || '0', 10);
-    if (isNaN(currentNext) || currentNext <= maxNumber) {
-      this.setNextDeviceId(maxNumber + 1);
     }
   }
 
@@ -445,7 +441,10 @@ class StorageManager {
   // --- KopKen Normal (Devices) ---
   getKopKenDevices() {
     try {
-      const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.KOPKEN_NORMAL)) || [];
+      let data = JSON.parse(localStorage.getItem(STORAGE_KEYS.KOPKEN_NORMAL)) || [];
+      // Clean empty devices if any exist
+      data = data.filter(d => d.accounts && d.accounts.length > 0);
+
       data.forEach(d => {
         d.accounts.forEach(a => {
           a.number = this.cleanPhoneNumber(a.number);
@@ -454,6 +453,9 @@ class StorageManager {
           }
         });
       });
+
+      // Always sort devices by device number ascending
+      data.sort((a, b) => this.extractDeviceNumber(a.name) - this.extractDeviceNumber(b.name));
       return data;
     } catch (e) {
       return [];
@@ -461,25 +463,15 @@ class StorageManager {
   }
 
   saveKopKenDevices(devices) {
+    devices.sort((a, b) => this.extractDeviceNumber(a.name) - this.extractDeviceNumber(b.name));
     localStorage.setItem(STORAGE_KEYS.KOPKEN_NORMAL, JSON.stringify(devices));
   }
 
-  // Auto Add Account into Device (Max 3 per device)
+  // Auto Add Account into Device (Max 3 per device, using smallest available device number)
   addKopKenAccount(number) {
     const cleaned = this.cleanPhoneNumber(number);
     const devices = this.getKopKenDevices();
-    let targetDevice = devices.find(d => d.accounts.length < 3);
-
-    if (!targetDevice) {
-      const nextId = this.getNextDeviceId();
-      targetDevice = {
-        id: `device-${nextId}`,
-        name: `DEVICE ${nextId}`,
-        accounts: []
-      };
-      devices.push(targetDevice);
-      this.setNextDeviceId(nextId + 1);
-    }
+    const targetDevice = this.findOrCreateSmallestAvailableDevice(devices);
 
     const newAcc = {
       id: `kn-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
@@ -818,18 +810,7 @@ class StorageManager {
         return;
       }
 
-      let targetDevice = devices.find(d => d.accounts.length < 3);
-
-      if (!targetDevice) {
-        const nextId = this.getNextDeviceId();
-        targetDevice = {
-          id: `device-${nextId}`,
-          name: `DEVICE ${nextId}`,
-          accounts: []
-        };
-        devices.push(targetDevice);
-        this.setNextDeviceId(nextId + 1);
-      }
+      const targetDevice = this.findOrCreateSmallestAvailableDevice(devices);
 
       targetDevice.accounts.push({
         id: `kn-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
